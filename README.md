@@ -1,5 +1,5 @@
 # CNN-Context-Category-Associations
-This program takes a CNN model written in PyTorch and runs analyses that reveal its responsiveness to contextual information. It is the code used to produce the results for Aminoff et al. (2022). The code can be run using AlexNet to calculate pearson's correlations and construct a context/category chart from the matrix data from the command line by running:
+This program takes a PyTorch CNN model and runs analyses that reveal its responsiveness to contextual information at each layer. It is the code used to produce the results for Aminoff et al. (2022). The code can be run using AlexNet to calculate pearson's correlations and construct a context/category chart from the matrix data from the command line by running:
 
 ```
 python main.py 
