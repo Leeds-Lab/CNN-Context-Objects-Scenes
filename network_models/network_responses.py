@@ -14,7 +14,6 @@ class Network_Evaluator:
         self.min_files = START_FILE_NUMBER
         self.max_files = END_FILE_NUMBER
 
-    # def max_neuron_layer_data(directories, min_files, max_files, only_files, using_model):
     def max_neuron_layer_data(self):
         current_file = self.min_files - 1
         data = dict()
@@ -40,7 +39,6 @@ class Network_Evaluator:
             current_file += 1
         self.data, self.number_of_layers, self.failed_images = data, number_of_layers, failed_images
 
-    # def create_neural_layers_dictionary(data, number_of_layers, using_model):
     def create_neural_layers_dictionary(self):
         neural_layers = dict()
         for layer in range(self.number_of_layers):
@@ -71,7 +69,6 @@ class Network_Evaluator:
         print("Done!\n")
         print("************************************")
 
-    # Main function for running and analyzing the responsiveness of the networks of interest
     def run_network_responses(self):
         self.file_paths = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
 
