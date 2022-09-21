@@ -11,7 +11,7 @@ There are other flags available for additional analyses. To run all CNN models u
 python main.py -all_models 1
 ```
 
-If you like this code or find it useful for your work, please cite:
+If you find this code useful for your work, please cite:
 
 ```
 @article{aminoff2022contextual,
