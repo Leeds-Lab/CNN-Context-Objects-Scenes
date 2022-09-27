@@ -21,23 +21,23 @@ SHALLOW_MODEL = {
     ALEXNET: Models.alexnet(),
     VGG16: Models.vgg16(),
     VGG19: Models.vgg19(),
-    # ALEXNET_PLACES365: Models.alexnet_places365()
+    # ALEXNET_PLACES365: Models.alexnet_places365() # uncomment when pretrained weights path is available
 }
 
 DEEP_MODEL = {
     RESNET18: Models.resnet18(),
-    # RESNET18_PLACES365: Models.resnet18_places365(),
+    # RESNET18_PLACES365: Models.resnet18_places365(), # uncomment when pretrained weights path is available
     RESNET50: Models.resnet50(),
-    # RESNET50_PLACES365: Models.resnet50_places365(),
+    # RESNET50_PLACES365: Models.resnet50_places365(), # uncomment when pretrained weights path is available
     RESNEXT50_32X4D: Models.resnext50_32x4d(),
     RESNET101: Models.resnet101(),
     RESNET152: Models.resnet152(),
     GOOGLENET: Models.googlenet(),
-    # GRCNN55: Models.grcnn55()
+    # GRCNN55: Models.grcnn55() # uncomment when pretrained weights path is available
 }
 
 # Static path variables
-DATA_PATH = './data/'
+DATA_PATH = './data/Aminoff2022/' # path to data used by Aminoff et al. 2022; can be changed to point to a different data directory/subdirectory
 OUTPUT_PATH = './outputs/'
 OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
 PEARSON_PATH = "/Pearson\'s Correlations/"
