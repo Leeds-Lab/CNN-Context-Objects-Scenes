@@ -2,7 +2,7 @@ from os import listdir
 
 # This function returns an ordered list of paths when all file names are numbers
 def sort_numbered_file_names(list_of_paths, num_of_files):
-        paths_for_analysis = [file_name for file_name in list_of_paths if not(file_name.lower().endswith(('.tar')))]
+        paths_for_analysis = [file_name for file_name in list_of_paths]
         image_names = paths_for_analysis[:num_of_files]
         image_names.sort()
         return image_names

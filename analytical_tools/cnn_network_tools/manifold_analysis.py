@@ -9,6 +9,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 from constants import DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER, OUTPUT_PATH, TSNE_, MDS_
 
+# This class creates a scatterplot and confusion matrices based on either TSNE or MDS
 class Manifold_Analysis:
     def __init__(self):
         super(Manifold_Analysis,self).__init__()

@@ -10,10 +10,8 @@
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.nn import init
 from functools import reduce
-import math
 
 __all__ = ['skgrcnn55', 'skgrcnn109', 'grcnn109', 'grcnn55']
 

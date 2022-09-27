@@ -9,6 +9,8 @@ from analytical_tools.matrix_tools.ratios_and_stats import ratios_and_pvalues, c
 
 from constants import OUTPUT_PATH, RAW_CONTEXT_RATIOS_FILE, RAW_CATEGORY_RATIOS_FILE, CONTEXT_EXEMPLARS, CATEGORY_EXEMPLARS, CONTEXTS, CATEGORIES, SHALLOW_MODEL, DEEP_MODEL, COL_NAMES
 
+# This class uses a cnn model's matrix data post analysis (Pearson's Correlation, Cosine similarity, etc.) to determine 
+# context and category ratios of a given model
 class Matrix_Evaluator:
     def __init__(self, models_for_analysis, MATRIX_PATH, MATRIX_RATIOS_NAME, use_confounds=False):
         super(Matrix_Evaluator, self).__init__()

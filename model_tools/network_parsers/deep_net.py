@@ -1,5 +1,7 @@
 import torch.nn as nn
 
+# Slightly different in structure from Shallow_CNN, Deep_CNN also instantiates a model up to a specified layer and
+# also can provide the number of layers a deep model contains
 class Deep_CNN(nn.Module):
     def __init__(self, model, layer_number = None):
             super(Deep_CNN, self).__init__()

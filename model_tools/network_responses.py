@@ -5,6 +5,7 @@ from analytical_tools.cnn_analysis import Analytics_Suite
 
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, SHALLOW_MODEL, DEEP_MODEL
 
+# This class extracts maximum firing neurons using Extractor and runs analyses for each layer
 class Network_Evaluator:
     def __init__(self, models_for_analysis, batch_analysis):
         super(Network_Evaluator, self).__init__()

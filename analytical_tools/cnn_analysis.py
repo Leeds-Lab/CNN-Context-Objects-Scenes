@@ -5,6 +5,8 @@ from analytical_tools.cnn_network_tools.hierarchical_analysis import Clustering_
 
 from constants import OUTPUT_PATH, TSNE_, MDS_
 
+# This class calls the proper analytical tools based on user specified needs made at the command line
+# Currently capable of pearson's correlation, hierarchical clustering, tSNE, and MDS
 class Analytics_Suite:
     def __init__(self, neural_layers_dictionary, batch_analysis, CNN_MODEL):
         super(Analytics_Suite, self).__init__()

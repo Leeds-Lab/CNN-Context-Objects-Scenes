@@ -27,6 +27,7 @@ def ratios_and_pvalues(layer_vector, ratios, in_values, out_values, CONTEXTS, SA
         error_bars.append(np.std(ratios[(SAMPLE_NUMBER*layer):(SAMPLE_NUMBER*layer)+SAMPLE_NUMBER])/sqrt(SAMPLE_NUMBER))
     return p_vector_R, p_vector_1, mn_vector, error_bars
 
+# This function uses context and category data to perform pairwise t-tests
 def context_category_pairwise_ttest(layer_vector, files, model_name, ratio_context, ratio_category):
     network_name = []
     p_vecR_context_vs_category=[] # Holds the p-values for pairwise t-tests between category and context for each layer

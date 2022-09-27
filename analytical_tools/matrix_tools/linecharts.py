@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 from constants import LAYER, NETWORK, RATIOCON, RATIOCAT
 
+# A simple function for creating linecharts based on network context/category ratio .csv
+# files created by Matrix_Evaluator
 def create_linecharts(PATH, FILE_PATH, MODEL, conv_layer_list):
     # Load Table
     table = pd.read_csv(FILE_PATH)

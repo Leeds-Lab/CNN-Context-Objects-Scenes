@@ -1,5 +1,8 @@
 import torch.nn as nn
 
+
+# This class instantiates neural networks up to specified layer and pass the transformed image into each sub_network, 
+# saving the results of each top layer in a list. It's also capable of returning a shallow model's convolution layers
 class Shallow_CNN(nn.Module):
     def __init__(self, model, layer_number = None):
             super(Shallow_CNN, self).__init__()
@@ -20,8 +23,6 @@ class Shallow_CNN(nn.Module):
                 conv_layers.append(layer_number)
         return conv_layers
 
-# Instantiate neural networks up to specified layer and pass the transformed image into each sub_network, 
-# saving the results of each top layer in a list
 # shallow_model_layers() is called by get_layer_data() in the Extractor class (neuron_retrieval.py) 
 # shal_model is a PARTICULAR model in object shallow_model (ex: AlexNet, VGG16, etc.)
 def shallow_model_layers(shal_model, batch_t):

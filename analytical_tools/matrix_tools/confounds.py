@@ -2,6 +2,9 @@ import numpy as np
 from math import floor
 from constants import CONTEXTS, CATEGORIES, CONTEXT_EXEMPLARS, CATEGORY_EXEMPLARS, CONTEXT_CONFOUNDS, CATEGORY_CONFOUNDS
 
+# These 4 functions modify matrix data in Matrix_Evaluator to remove confounding variables. The confound matrices for context/categoey
+# needs to be provided in a separate file (in this case, ./confounding_data/)
+
 # Confound Expansion function creates a new matrix matching the dimensions of the data matrix
 def confound_expansion(confound_matrix, dimension_number, expansion_number):
     expansion_matrix = np.empty(((dimension_number*expansion_number) - 1, (dimension_number*expansion_number) - 1))

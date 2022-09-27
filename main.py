@@ -31,7 +31,6 @@ all_args.add_argument("-grcnn55", '--grcnn55', default=0)
 
 # Other arguments include using additional networks and analyses
 all_args.add_argument("-all_models", "--all_models", default=0)
-all_args.add_argument("-test", "--test", default=0)
 all_args.add_argument("-h_cluster", '--h_cluster', default=0)
 all_args.add_argument("-m_MDS", '--m_MDS', default=0)
 all_args.add_argument("-m_TSNE", '--m_TSNE', default=0)

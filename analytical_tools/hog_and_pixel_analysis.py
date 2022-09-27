@@ -6,6 +6,7 @@ import numpy.ma as ma
 import glob
 from constants import DATA_PATH, OUTPUT_PATH
 
+# The class does a Histogram of Oriented Gradients (HOG) and pixel analysis of the image data
 class Hog_And_Pixels:
     def __init__(self):
         super(Hog_And_Pixels, self).__init__()
@@ -38,7 +39,7 @@ class Hog_And_Pixels:
 
     def mean_squared_matrix(self, data_dict, file_name):
         # Double for loop where each picture is compared to another picture and the 3rd column in the sq_matrix_data is a vector
-        # containing the mean squared differences between pictures either in the form of Histogram of Oriented Gradients (HOG) or pixel data
+        # containing the mean squared differences between pictures either in the form of HOG or pixel data
         sq_matrix_data = []
         for pic1 in data_dict:
             for pic2 in data_dict:

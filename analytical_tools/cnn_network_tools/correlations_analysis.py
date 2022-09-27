@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 
 from constants import OUTPUT_PATH
 
+# Pearson's Correlation coefficient
 class Correlation_Analysis:
     def __init__(self):
         super(Correlation_Analysis, self).__init__()

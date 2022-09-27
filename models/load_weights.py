@@ -2,6 +2,7 @@ import torch
 from torchvision import models
 import models.GRCNN as Grcnn
 
+# Contains call functions for models. GRCNN55, and the Places365 trained models need .pt and .tar files containing weights loaded before use
 class Models:
     def alexnet():
         return models.alexnet(weights=True)

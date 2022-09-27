@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage
 from constants import OUTPUT_PATH
 
+# Hierarchical Cluster Analysis
 class Clustering_Analysis:
     def __init__(self):
         super(Clustering_Analysis, self).__init__()
