@@ -7,7 +7,7 @@ from sklearn.manifold import TSNE, MDS
 from sklearn.cluster import KMeans
 from sklearn.metrics import confusion_matrix, classification_report
 
-from constants import DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER, OUTPUT_PATH, TSNE_, MDS_
+from constants import DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER, OUTPUT_MODELS_PATH, TSNE_, MDS_
 
 # This class creates a scatterplot and confusion matrices based on either TSNE or MDS
 class Manifold_Analysis:
@@ -145,7 +145,7 @@ class Manifold_Analysis:
 
     def run_using(self, analysis_type, neural_layers_dictionary, CNN_MODEL):
         self.analysis_type = analysis_type
-        self.in_file_path = OUTPUT_PATH + CNN_MODEL + "/" + self.analysis_type + "/"
+        self.in_file_path = OUTPUT_MODELS_PATH + CNN_MODEL + "/" + self.analysis_type + "/"
         self.count_categories()
         
         if not os.path.exists(self.in_file_path): os.mkdir(self.in_file_path)

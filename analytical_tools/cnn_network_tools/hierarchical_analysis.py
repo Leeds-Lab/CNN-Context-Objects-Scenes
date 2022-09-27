@@ -3,7 +3,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage
-from constants import OUTPUT_PATH
+from constants import OUTPUT_MODELS_PATH
 
 # Hierarchical Cluster Analysis
 class Clustering_Analysis:
@@ -12,7 +12,7 @@ class Clustering_Analysis:
     # This function performs a cluster analysis on each layer stored in a dictionary produced by image_layer_analysis()
     def hierarchical_cluster_analysis(self, neural_layers_dictionary, CNN_MODEL):
         print("Beginning Hierarchical Clustering Analysis\n")
-        in_file_path = OUTPUT_PATH + CNN_MODEL + "/" + "Ward Linkage Analysis"
+        in_file_path = OUTPUT_MODELS_PATH + CNN_MODEL + "/" + "Ward Linkage Analysis"
         if os.path.exists(in_file_path) == False: os.mkdir(in_file_path)
         for key in neural_layers_dictionary:
                 link_matrix = linkage(neural_layers_dictionary[key].T, method='ward', metric = 'euclidean', optimal_ordering=False)

@@ -2,7 +2,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 
-from constants import OUTPUT_PATH
+from constants import OUTPUT_MODELS_PATH
 
 # Pearson's Correlation coefficient
 class Correlation_Analysis:
@@ -10,7 +10,7 @@ class Correlation_Analysis:
         super(Correlation_Analysis, self).__init__()
     def pearson_correlation(self, neural_layers_dictionary, CNN_MODEL):
             print("Calculating Pearson's Correlation...\n")
-            IN_FILE_PATH = OUTPUT_PATH + CNN_MODEL + "/" + "Pearson's Correlations"
+            IN_FILE_PATH = OUTPUT_MODELS_PATH + CNN_MODEL + "/" + "Pearson's Correlations"
             NUMPY_PATH = IN_FILE_PATH + "/numpy/"
             HEATMAPS_PATH = IN_FILE_PATH + "/heatmaps/"
             if os.path.exists(IN_FILE_PATH) == False: os.mkdir(IN_FILE_PATH)

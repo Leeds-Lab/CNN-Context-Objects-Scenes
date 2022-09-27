@@ -4,6 +4,7 @@ from PIL import Image
 import pandas as pd
 import numpy.ma as ma
 import glob
+import os
 from constants import DATA_PATH, OUTPUT_PATH
 
 # The class does a Histogram of Oriented Gradients (HOG) and pixel analysis of the image data
@@ -63,7 +64,9 @@ class Hog_And_Pixels:
             hog_data_dict[images[image]] = hog_image
             pixel_data_dict[images[image]] = pixel_image
         
-        self.mean_squared_matrix(hog_data_dict, OUTPUT_PATH + "HOG_Matrix.csv")
-        self.mean_squared_matrix(pixel_data_dict, OUTPUT_PATH + "Pixel_Matrix.csv")
+        FEATURES_PATH = OUTPUT_PATH + 'feature_discriptors/'
+        if os.path.exists(FEATURES_PATH) == False: os.mkdir(FEATURES_PATH)
+        self.mean_squared_matrix(hog_data_dict, FEATURES_PATH + "HOG_Matrix.csv")
+        self.mean_squared_matrix(pixel_data_dict, FEATURES_PATH + "Pixel_Matrix.csv")
         print("Hog and Pixel MeanSquared matrices created.")
 

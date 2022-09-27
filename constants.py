@@ -39,6 +39,7 @@ DEEP_MODEL = {
 # Static path variables
 DATA_PATH = './data/'
 OUTPUT_PATH = './outputs/'
+OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
 PEARSON_PATH = "/Pearson\'s Correlations/"
 CONTEXT_CONFOUNDS = 'confounding_data/71-confounds/context_confounds.txt'
 CATEGORY_CONFOUNDS = 'confounding_data/71-confounds/category_confounds.txt'

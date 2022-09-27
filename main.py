@@ -1,4 +1,5 @@
 import argparse
+import os
 from model_tools.network_responses import Network_Evaluator
 from analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
 from analytical_tools.matrix_tools.linecharts import create_linecharts
@@ -6,7 +7,7 @@ from analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 
 from model_tools.network_parsers.shallow_net import Shallow_CNN
 from model_tools.network_parsers.deep_net import Deep_CNN
-from constants import ALEXNET, ALEXNET_PLACES365, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, OUTPUT_PATH, PEARSON_PATH, MODELS, RESNET50_PLACES365, RESNEXT50_32X4D, SHALLOW_MODEL, DEEP_MODEL
+from constants import ALEXNET, ALEXNET_PLACES365, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RESNET50_PLACES365, RESNEXT50_32X4D, SHALLOW_MODEL, DEEP_MODEL
 
 # Two categories per context and five pictures per category
 # This code can be adjusted to reflect your actual data and desired analysis
@@ -21,6 +22,7 @@ all_args.add_argument("-run_compute_ratios", "--run_compute_ratios", default=1)
 all_args.add_argument("-pearson_charts", "--pearson_charts", default=1)
 all_args.add_argument("-pearson", '--pearson', default=1)
 all_args.add_argument("-confounds", '--confounds', default=1) # different data probably won't have confounds - change to False
+all_args.add_argument("-hog_pixel_meansq", "--hog_pixel_meansq", default=1)
 
 # models
 all_args.add_argument("-alexnet", '--alexnet', default=0)
@@ -34,7 +36,6 @@ all_args.add_argument("-all_models", "--all_models", default=0)
 all_args.add_argument("-h_cluster", '--h_cluster', default=0)
 all_args.add_argument("-m_MDS", '--m_MDS', default=0)
 all_args.add_argument("-m_TSNE", '--m_TSNE', default=0)
-all_args.add_argument("-hog_pixel_meansq", "--hog_pixel_meansq", default=0)
 
 args = vars(all_args.parse_args())
 
@@ -60,6 +61,9 @@ if __name__ == "__main__":
     # Determine whether to set up confound matrix
     confounds = int(args['confounds'])
     
+    # Create output path for models if not present
+    if os.path.exists(OUTPUT_MODELS_PATH) == False: os.mkdir(OUTPUT_MODELS_PATH)
+
     # Process and analyze particular neural network models
     if int(args["run_net_responses"]) == 1:
         CNN_Eval = Network_Evaluator(models_for_analysis, batch_analysis)
@@ -80,7 +84,7 @@ if __name__ == "__main__":
                 if MODEL in RESNET: layer_list = [0, 4, 5, 6, 7]
                 else : layer_list = list(range(Deep_CNN(DEEP_MODEL[MODEL]).NUMBER_OF_LAYERS))
             else: print(f"{MODEL} not listed? Not found in either SHALLOW_MODEL or DEEP_MODEL.")
-            PATH = OUTPUT_PATH + MODEL + PEARSON_PATH + MODEL
+            PATH = OUTPUT_MODELS_PATH + MODEL + PEARSON_PATH + MODEL
             FILE_PATH = PATH + "_pearson_ratios.csv"
             create_linecharts(PATH, FILE_PATH, MODEL, layer_list)
 

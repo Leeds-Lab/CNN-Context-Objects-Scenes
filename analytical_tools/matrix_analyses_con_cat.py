@@ -7,7 +7,7 @@ from model_tools.network_parsers.deep_net import Deep_CNN
 from analytical_tools.matrix_tools.confounds import create_confound_matrix, context_confound_submat, category_confound_submat
 from analytical_tools.matrix_tools.ratios_and_stats import ratios_and_pvalues, context_category_pairwise_ttest
 
-from constants import OUTPUT_PATH, RAW_CONTEXT_RATIOS_FILE, RAW_CATEGORY_RATIOS_FILE, CONTEXT_EXEMPLARS, CATEGORY_EXEMPLARS, CONTEXTS, CATEGORIES, SHALLOW_MODEL, DEEP_MODEL, COL_NAMES
+from constants import OUTPUT_MODELS_PATH, RAW_CONTEXT_RATIOS_FILE, RAW_CATEGORY_RATIOS_FILE, CONTEXT_EXEMPLARS, CATEGORY_EXEMPLARS, CONTEXTS, CATEGORIES, SHALLOW_MODEL, DEEP_MODEL, COL_NAMES
 
 # This class uses a cnn model's matrix data post analysis (Pearson's Correlation, Cosine similarity, etc.) to determine 
 # context and category ratios of a given model
@@ -74,8 +74,8 @@ class Matrix_Evaluator:
     def loop_through_models_and_analyze(self):
         for model_name in range(len(self.M_FILES)):
             MODEL_NAME = self.M_FILES[model_name]
-            if not os.path.isdir(OUTPUT_PATH + MODEL_NAME): continue
-            self.path_to_file = OUTPUT_PATH + MODEL_NAME + self.MATRIX_PATH
+            if not os.path.isdir(OUTPUT_MODELS_PATH + MODEL_NAME): continue
+            self.path_to_file = OUTPUT_MODELS_PATH + MODEL_NAME + self.MATRIX_PATH
 
             # Pass the model into its proper class to get its number of layers for the layer_vector
             if MODEL_NAME in SHALLOW_MODEL.keys(): Model_Features = Shallow_CNN(SHALLOW_MODEL[MODEL_NAME])
@@ -88,7 +88,7 @@ class Matrix_Evaluator:
             file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'w')
             file=open(self.path_to_file + RAW_CATEGORY_RATIOS_FILE, 'w')
 
-            layers_paths = glob.glob(OUTPUT_PATH + MODEL_NAME + self.MATRIX_PATH + "numpy/*.npy")
+            layers_paths = glob.glob(OUTPUT_MODELS_PATH + MODEL_NAME + self.MATRIX_PATH + "numpy/*.npy")
             
             # Context/Category Ratio analysis for each layer
             for i in range(len(layer_vector)):
