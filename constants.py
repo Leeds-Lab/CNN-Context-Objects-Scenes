@@ -38,6 +38,7 @@ DEEP_MODEL = {
 
 # Static path variables
 DATA_PATH = './data/Aminoff2022/' # path to data used by Aminoff et al. 2022; can be changed to point to a different data directory/subdirectory
+DATA_NAME = 'Aminoff2022'
 OUTPUT_PATH = './outputs/'
 OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
 PEARSON_PATH = "/Pearson\'s Correlations/"
