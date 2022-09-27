@@ -1,17 +1,40 @@
 import os
-from sre_constants import CATEGORY
-from torchvision import models
+from models.load_weights import Models
 
 # CNN Model Names
 ALEXNET = "AlexNet"
+ALEXNET_PLACES365 = "AlexNet_Places365"
 VGG16 = "Vgg16"
 VGG19 = "Vgg19"
 RESNET18 = "ResNet18"
+RESNET18_PLACES365 = "ResNet18_Places365"
 RESNET50 = "ResNet50"
+RESNET50_PLACES365 = "ResNet50_Places365"
 RESNEXT50_32X4D = "Resnext50_32x4d"
 RESNET101 = "ResNet101"
 RESNET152 = "ResNet152"
 GOOGLENET = "GoogLeNet"
+GRCNN55 = "GRCNN55"
+
+# Shallow and Deep models available with loaded weights for analyzing layer/neuron responsiveness to context/category information
+SHALLOW_MODEL = {
+    ALEXNET: Models.alexnet(),
+    VGG16: Models.vgg16(),
+    VGG19: Models.vgg19(),
+    ALEXNET_PLACES365: Models.alexnet_places365()
+}
+
+DEEP_MODEL = {
+    RESNET18: Models.resnet18(),
+    RESNET18_PLACES365: Models.resnet18_places365(),
+    RESNET50: Models.resnet50(),
+    RESNET50_PLACES365: Models.resnet50_places365(),
+    RESNEXT50_32X4D: Models.resnext50_32x4d(),
+    RESNET101: Models.resnet101(),
+    RESNET152: Models.resnet152(),
+    GOOGLENET: Models.googlenet(),
+    GRCNN55: Models.grcnn55()
+}
 
 # Static path variables
 DATA_PATH = './data/'
@@ -31,22 +54,6 @@ END_FILE_NUMBER = 10 # same as total number of pictures for each context file
 
 # Scatterplot analysis tools available
 TSNE_, MDS_ = "TSNE", "MDS"
-
-# Shallow and Deep models available with loaded weights for analyzing layer/neuron responsiveness to context/category information
-SHALLOW_MODEL = {
-    ALEXNET: models.alexnet(weights=True),
-    VGG16: models.vgg16(weights=True),
-    VGG19: models.vgg19(weights=True),
-}
-
-DEEP_MODEL = {
-    RESNET18: models.resnet18(weights=True),
-    RESNET50: models.resnet50(weights=True),
-    RESNEXT50_32X4D: models.resnext50_32x4d(weights=True),
-    RESNET101: models.resnet101(weights=True),
-    RESNET152: models.resnet152(weights=True),
-    GOOGLENET: models.googlenet(weights=True)
-}
 
 # DataFrame Column Labels for context/category analysis of Pearson's Correlation Matrix
 NETWORK = 'Network Name'
