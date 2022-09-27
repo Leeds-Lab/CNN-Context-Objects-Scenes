@@ -1,7 +1,7 @@
 import pandas as pd
-from model_tools.neuron_retrieval import Extractor
-from utils import files_setup as fs
-from analytical_tools.cnn_analysis import Analytics_Suite
+from tools.model_tools.neuron_retrieval import Extractor
+from tools.utils import files_setup as fs
+from tools.analytical_tools.cnn_analysis import Analytics_Suite
 
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, SHALLOW_MODEL, DEEP_MODEL
 

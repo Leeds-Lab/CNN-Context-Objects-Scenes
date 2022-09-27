@@ -4,8 +4,8 @@ from PIL import Image
 import torchvision.transforms as T
 
 from constants import SHALLOW_MODEL, DEEP_MODEL
-from model_tools.network_parsers.shallow_net import shallow_model_layers
-from model_tools.network_parsers.deep_net import deep_model_layers
+from tools.model_tools.network_parsers.shallow_net import shallow_model_layers
+from tools.model_tools.network_parsers.deep_net import deep_model_layers
 
 # This class standardizes image data and obtains the maximum firing neuron from a layer
 class Extractor:

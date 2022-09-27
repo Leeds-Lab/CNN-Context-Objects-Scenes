@@ -1,12 +1,12 @@
 import argparse
 import os
-from model_tools.network_responses import Network_Evaluator
-from analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
-from analytical_tools.matrix_tools.linecharts import create_linecharts
-from analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
+from tools.model_tools.network_responses import Network_Evaluator
+from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
+from tools.analytical_tools.matrix_tools.linecharts import create_linecharts
+from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 
-from model_tools.network_parsers.shallow_net import Shallow_CNN
-from model_tools.network_parsers.deep_net import Deep_CNN
+from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
+from tools.model_tools.network_parsers.deep_net import Deep_CNN
 from constants import ALEXNET, ALEXNET_PLACES365, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RESNET50_PLACES365, RESNEXT50_32X4D, SHALLOW_MODEL, DEEP_MODEL
 
 # Two categories per context and five pictures per category

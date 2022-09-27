@@ -1,7 +1,7 @@
 import os
-from analytical_tools.cnn_network_tools.correlations_analysis import Correlation_Analysis
-from analytical_tools.cnn_network_tools.manifold_analysis import Manifold_Analysis
-from analytical_tools.cnn_network_tools.hierarchical_analysis import Clustering_Analysis
+from tools.analytical_tools.cnn_network_tools.correlations_analysis import Correlation_Analysis
+from tools.analytical_tools.cnn_network_tools.manifold_analysis import Manifold_Analysis
+from tools.analytical_tools.cnn_network_tools.hierarchical_analysis import Clustering_Analysis
 
 from constants import OUTPUT_MODELS_PATH, TSNE_, MDS_
 

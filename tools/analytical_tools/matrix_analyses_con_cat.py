@@ -2,10 +2,10 @@ import os, glob
 import numpy as np
 import pandas as pd
 
-from model_tools.network_parsers.shallow_net import Shallow_CNN
-from model_tools.network_parsers.deep_net import Deep_CNN
-from analytical_tools.matrix_tools.confounds import create_confound_matrix, context_confound_submat, category_confound_submat
-from analytical_tools.matrix_tools.ratios_and_stats import ratios_and_pvalues, context_category_pairwise_ttest
+from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
+from tools.model_tools.network_parsers.deep_net import Deep_CNN
+from tools.analytical_tools.matrix_tools.confounds import create_confound_matrix, context_confound_submat, category_confound_submat
+from tools.analytical_tools.matrix_tools.ratios_and_stats import ratios_and_pvalues, context_category_pairwise_ttest
 
 from constants import OUTPUT_MODELS_PATH, RAW_CONTEXT_RATIOS_FILE, RAW_CATEGORY_RATIOS_FILE, CONTEXT_EXEMPLARS, CATEGORY_EXEMPLARS, CONTEXTS, CATEGORIES, SHALLOW_MODEL, DEEP_MODEL, COL_NAMES
 
