@@ -3,36 +3,37 @@ from tools.model_tools.neuron_retrieval import Extractor
 from tools.utils import files_setup as fs
 from tools.analytical_tools.cnn_analysis import Analytics_Suite
 
-from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, SHALLOW_MODEL, DEEP_MODEL
+from constants import SHALLOW_MODEL, DEEP_MODEL
 
 # This class extracts maximum firing neurons using Extractor and runs analyses for each layer
 class Network_Evaluator:
-    def __init__(self, models_for_analysis, batch_analysis):
+    def __init__(self, models_for_analysis, batch_analysis, DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER):
         super(Network_Evaluator, self).__init__()
         self.models_for_analysis = models_for_analysis
         self.batch_analysis = batch_analysis
-        self.directories = DIRECTORIES_FOR_ANALYSIS
-        self.min_files = START_FILE_NUMBER
-        self.max_files = END_FILE_NUMBER
+        self.DIRECTORIES_FOR_ANALYSIS = DIRECTORIES_FOR_ANALYSIS
+        self.START_FILE_NUMBER = START_FILE_NUMBER
+        self.END_FILE_NUMBER = END_FILE_NUMBER
+        self.failed_images = []
 
     def max_neuron_layer_data(self):
-        current_file = self.min_files - 1
+        current_file = self.START_FILE_NUMBER - 1
         data = dict()
         directory_number = 0
         counter = 0
         while(current_file < len(self.file_paths)):
             img_name = self.file_paths[current_file]
             print(f"Processing image: \t{img_name}")
-            Extract = Extractor(self.directories[directory_number] + "/" + img_name, self.using_model)
+            Extract = Extractor(self.DIRECTORIES_FOR_ANALYSIS[directory_number] + "/" + img_name, self.using_model)
             img_list, number_of_layers, failed_images = Extract.extract_max_neurons()
 
             counter += 1
-            if counter == self.max_files:
+            if counter == self.END_FILE_NUMBER:
                 directory_number += 1
                 counter = 0
             # If the extraction fails to return anything, continue to next image
             if(img_list == None):
-                number_of_data_points[self.directories[directory_number]] -= 1 # this line needs to be adjusted; number_of_data_points is now in another file
+                number_of_data_points[self.DIRECTORIES_FOR_ANALYSIS[directory_number]] -= 1 # this line needs to be adjusted; number_of_data_points is now in another file
                 current_file += 1
                 continue
             image = 'Img' + img_name + "_no" + str(current_file + 1)
@@ -71,7 +72,7 @@ class Network_Evaluator:
         print("************************************")
 
     def run_network_responses(self):
-        self.file_paths = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
+        self.file_paths = fs.organize_paths_for(self.DIRECTORIES_FOR_ANALYSIS, self.END_FILE_NUMBER)
 
         # for each model available for study, get layer responses using the context/category data
         for CNN_MODEL in self.models_for_analysis:
