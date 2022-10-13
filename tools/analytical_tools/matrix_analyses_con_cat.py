@@ -19,6 +19,7 @@ class Matrix_Evaluator:
         self.path_to_file = ''
         self.MATRIX_PATH = MATRIX_PATH
         self.MATRIX_RATIOS_NAME = MATRIX_RATIOS_NAME
+        self.CATEGORY_BOXSIZE = CATEGORY_EXEMPLARS**2
 
         # Create empty lists for storing future values for t-tests
         self.in_context_values, self.out_context_values, self.ratio_context = [], [], []
@@ -41,8 +42,8 @@ class Matrix_Evaluator:
             self.out_context_values.append(out_values)
             
             # inContext
-            in_values=(self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1))].sum()-CONTEXT_EXEMPLARS)/90
-            # in_values=(self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*k+CATEGORY_EXEMPLARS),(CONTEXT_EXEMPLARS*k+5):(CONTEXT_EXEMPLARS*(k+1))].sum())/25
+            # in_values=(self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1))].sum()-CONTEXT_EXEMPLARS)/90
+            in_values=(self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*k+CATEGORY_EXEMPLARS),(CONTEXT_EXEMPLARS*k+CATEGORY_EXEMPLARS):(CONTEXT_EXEMPLARS*(k+1))].sum())/self.CATEGORY_BOXSIZE
             self.in_context_values.append(in_values)
             
             # contextRatio
@@ -51,6 +52,7 @@ class Matrix_Evaluator:
             print(str(in_values) + "\t" + str(out_values) + "\t" + str(contextRatio), file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'a'))
         
     def category_ratio_analysis(self):
+
         for k in range(CATEGORIES):
             # outCategory
             submatrix_data = np.hstack((self.layer_data[(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1)),:(CATEGORY_EXEMPLARS*k)],self.layer_data[(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1)),(CATEGORY_EXEMPLARS*(k+1)):]))
@@ -62,7 +64,7 @@ class Matrix_Evaluator:
             self.out_category_values.append(out_values)
             
             # inCategory
-            in_values=(self.layer_data[(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1)),(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1))].sum()-CATEGORY_EXEMPLARS)/20
+            in_values=(self.layer_data[(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1)),(CATEGORY_EXEMPLARS*k):(CATEGORY_EXEMPLARS*(k+1))].sum()-CATEGORY_EXEMPLARS)/(self.CATEGORY_BOXSIZE - CATEGORY_EXEMPLARS)
             self.in_category_values.append(in_values)
             
             # categoryRatio
