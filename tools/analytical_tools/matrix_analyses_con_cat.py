@@ -83,7 +83,7 @@ class Matrix_Evaluator:
             b10 = dataframe[column].sort_values().iloc[0:10]
             botTen[column+"_bottom10"] = tuple(zip(b10.index, b10.values))
         
-        return topTen, botTen
+        return pd.DataFrame(topTen), pd.DataFrame(botTen)
     
     # This function loops through each available models and networks folders containing the matrices of interest
     def loop_through_models_and_analyze(self):
@@ -110,7 +110,7 @@ class Matrix_Evaluator:
             CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH)]
             ALL_FILES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
             CATEGORY_NAMES = list()
-            for i in range(len(ALL_FILES)):
+            for i in range(1,len(ALL_FILES),5):
                 CATEGORY_NAMES.append(ALL_FILES[i])
             
             layCon = dict()
