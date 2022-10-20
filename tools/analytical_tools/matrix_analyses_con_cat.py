@@ -32,7 +32,7 @@ class Matrix_Evaluator:
         self.context_confounds, self.category_confounds = [], []
 
     def context_ratio_analysis(self):   # for any one layer out of all the layers of the model
-        for k in range(CONTEXTS):   # contexts = 71 in this case, as #17 and #32 are missing
+        for k in range(CONTEXTS):   # contexts = 73 in this case, as #17 and #32 were added
             # outContext
             submatrix_data=np.hstack((self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),:(CONTEXT_EXEMPLARS*k)],self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),(CONTEXT_EXEMPLARS*(k+1)):]))
             if self.use_confounds: submatrix = context_confound_submat(self.context_confounds, k, submatrix_data)
