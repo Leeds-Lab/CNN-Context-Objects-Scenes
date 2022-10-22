@@ -2,6 +2,7 @@ import os
 import glob
 import shutil
 import pandas as pd
+# from CNN_Context_Category_Associations.constants import SHALLOW_MODEL, DEEP_MODEL
 
 # These few lines of code takes loops through the output files and saves a copy of model layer data and model graphs
 # to one location (./outputs/models/all_model_outputs)
@@ -13,6 +14,7 @@ csvs = glob.glob('./outputs/models/*/*/*.csv')
 all_model_outputs = pd.DataFrame()
 for csv in csvs:
     model_output = pd.read_csv(csv)
+    MODEL_NAME = model_output['Network Name'].drop_duplicates()[0]
     all_model_outputs = pd.concat([all_model_outputs, model_output]).drop('Unnamed: 0', axis=1)
 all_model_outputs.to_csv(all_models_path + 'all_model_outputs.csv')
 
