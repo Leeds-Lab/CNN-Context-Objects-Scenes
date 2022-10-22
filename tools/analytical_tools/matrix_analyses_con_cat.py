@@ -31,7 +31,7 @@ class Matrix_Evaluator:
         self.use_confounds = use_confounds
         self.context_confounds, self.category_confounds = [], []
 
-    def context_ratio_analysis(self):   # for any one layer out of all the layers of the model
+    def context_ratio_analysis(self, layer_num):   # for any one layer out of all the layers of the model
         for k in range(CONTEXTS):   # contexts = 73 in this case, as #17 and #32 were added
             # outContext
             submatrix_data=np.hstack((self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),:(CONTEXT_EXEMPLARS*k)],self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),(CONTEXT_EXEMPLARS*(k+1)):]))
@@ -50,9 +50,9 @@ class Matrix_Evaluator:
             # contextRatio
             contextRatio = in_values/out_values
             self.ratio_context.append(contextRatio)  
-            print(str(in_values) + "\t" + str(out_values) + "\t" + str(contextRatio), file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'a'))
+            print(f"{layer_num}\t{in_values}\t{out_values}\t{contextRatio}", file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'a'))
         
-    def category_ratio_analysis(self):
+    def category_ratio_analysis(self, layer_num):
 
         for k in range(CATEGORIES):
             # outCategory
@@ -71,7 +71,7 @@ class Matrix_Evaluator:
             # categoryRatio
             categoryRatio = in_values/out_values
             self.ratio_category.append(categoryRatio)
-            print(str(in_values) + "\t" + str(out_values) + "\t" + str(categoryRatio), file=open(self.path_to_file + RAW_CATEGORY_RATIOS_FILE, 'a'))
+            print(f"{layer_num}\t{in_values}\t{out_values}\t{categoryRatio}", file=open(self.path_to_file + RAW_CATEGORY_RATIOS_FILE, 'a'))
     
     
     def getExtremeVals(self,dataframe):
@@ -121,11 +121,11 @@ class Matrix_Evaluator:
             for i in range(len(layer_vector)):
                 # Load in layer data
                 self.layer_data = np.load(layers_paths[i])     
-                self.context_ratio_analysis()                  
+                self.context_ratio_analysis(i)                  
 
                 layCon[f"Layer{i+1}"] = self.ratio_context[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]   
 
-                self.category_ratio_analysis()
+                self.category_ratio_analysis(i)
                 layCat[f"Layer{i+1}"] = self.ratio_category[(CATEGORIES*i):(CATEGORIES*i)+CATEGORIES] 
 
             # create dataframes of ratios at each layer and map to context/category names
