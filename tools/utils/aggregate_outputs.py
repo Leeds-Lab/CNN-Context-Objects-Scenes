@@ -9,22 +9,24 @@ all_models_path = './outputs/models/all_models/'
 if os.path.exists(all_models_path) == False: os.mkdir(all_models_path)
 
 # Aggregate model layer data into a single table
-csvs = glob.glob('./outputs/models/*/*/*.csv')
-tables_path = all_models_path + 'tables/'
-if os.path.exists(tables_path) == False: os.mkdir(tables_path)
-all_model_outputs = pd.DataFrame()
-for csv in csvs:
-    model_output = pd.read_csv(csv)
-    MODEL_NAME = model_output['Network Name'].drop_duplicates()[0]
-    all_model_outputs = pd.concat([all_model_outputs, model_output]).drop('Unnamed: 0', axis=1)
-all_model_outputs.to_csv(tables_path + 'all_model_outputs.csv')
+def agg_model_tables(all_models_path):
+    csvs = glob.glob('./outputs/models/*/*/*.csv')
+    tables_path = all_models_path + 'tables/'
+    if os.path.exists(tables_path) == False: os.mkdir(tables_path)
+    all_model_outputs = pd.DataFrame()
+    for csv in csvs:
+        model_output = pd.read_csv(csv)
+        MODEL_NAME = model_output['Network Name'].drop_duplicates()[0]
+        all_model_outputs = pd.concat([all_model_outputs, model_output]).drop('Unnamed: 0', axis=1)
+    all_model_outputs.to_csv(tables_path + 'all_model_outputs.csv')
 
 # Save all .jpg graph outputs
-graphs = glob.glob('./outputs/models/*/*/*.jpg')
-figures_path = all_models_path + 'figures/'
-if os.path.exists(figures_path) == False: os.mkdir(figures_path)
-for graph in graphs:
-    shutil.copy(graph, figures_path)
+def agg_figures(all_models_path):
+    graphs = glob.glob('./outputs/models/*/*/*.jpg')
+    figures_path = all_models_path + 'figures/'
+    if os.path.exists(figures_path) == False: os.mkdir(figures_path)
+    for graph in graphs:
+        shutil.copy(graph, figures_path)
 
 
 # Select highest context ratio per context within-model and 
