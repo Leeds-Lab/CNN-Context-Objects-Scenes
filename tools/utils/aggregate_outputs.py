@@ -29,23 +29,31 @@ def agg_figures(all_models_path):
         shutil.copy(graph, figures_path)
 
 
-# Select highest context ratio per context within-model and 
-# aggregate context ratio data for each context across models
-# txts = glob.glob('./outputs/models/*/*/raw_category_ratios.txt')
-# tables_path = all_models_path + 'tables/'
-# if os.path.exists(tables_path) == False: os.mkdir(tables_path)
-# model_category_table = pd.DataFrame()
-# for txt in txts:
-#     MODEL_NAME = txt.split('\\')[1]
-#     model_output = pd.read_csv(txt, sep='\t', header=None).rename(columns={0:'Layer', 1:'inRatio', 2:'outRatio', 3:'in-out'})
-#     print(model_output)
-#     layers = list(model_output['Layer'].drop_duplicates())
-#     model_output_t = pd.DataFrame()
-#     for layer in layers:
-#         model_output_copy = model_output.copy()
-#         model = list(model_output_copy[model_output_copy['Layer'] == layer]['in-out'])
-#         model_output_t[layer] = model
-#     model_output_t['Max'] = model_output_t.max(axis=1)
-#     model_category_table[MODEL_NAME] = list(model_output_t['Max'])
+# Select highest in-out ratio per context or category within-model and 
+# aggregate in-out ratio data for each context across models
+tables_path = all_models_path + 'tables/'
+if os.path.exists(tables_path) == False: os.mkdir(tables_path)
 
-# print(model_category_table)
+def agg_max_model_tables(txts, output_path):
+    model_table = pd.DataFrame()
+    for txt in txts:
+        MODEL_NAME = txt.split('\\')[1]
+        model_output = pd.read_csv(txt, sep='\t', header=None).rename(columns={0:'Layer', 1:'inRatio', 2:'outRatio', 3:'in-out'})
+        layers = list(model_output['Layer'].drop_duplicates())
+        model_output_t = pd.DataFrame()
+        for layer in layers:
+            model_output_copy = model_output.copy()
+            model = list(model_output_copy[model_output_copy['Layer'] == layer]['in-out'])
+            model_output_t[layer] = model
+        model_output_t['Max'] = model_output_t.max(axis=1)
+        model_table[MODEL_NAME] = list(model_output_t['Max'])
+    model_table.index += 1
+    model_table.to_csv(output_path)
+
+raw_category_data = glob.glob('./outputs/models/*/*/raw_category_ratios.txt')
+r_category_path = f'{tables_path}max_categories.csv'
+agg_max_model_tables(raw_category_data, r_category_path)
+
+raw_context_data = glob.glob('./outputs/models/*/*/raw_context_ratios.txt')
+r_context_path = f'{tables_path}max_contexts.csv'
+agg_max_model_tables(raw_category_data, r_context_path)
