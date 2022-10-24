@@ -31,10 +31,21 @@ def agg_figures(all_models_path):
 
 # Select highest context ratio per context within-model and 
 # aggregate context ratio data for each context across models
-txts = glob.glob('./outputs/models/*/*/*.txt')
-tables_path = all_models_path + 'tables/'
-if os.path.exists(tables_path) == False: os.mkdir(tables_path)
-for txt in txts:
-    model_output = pd.read_csv(txt, sep='\t', header=None).rename(columns={0:'Layer', 1:'inRatio', 2:'outRatio', 3:'in-out'})
-    print(model_output)
-    break
+# txts = glob.glob('./outputs/models/*/*/raw_category_ratios.txt')
+# tables_path = all_models_path + 'tables/'
+# if os.path.exists(tables_path) == False: os.mkdir(tables_path)
+# model_category_table = pd.DataFrame()
+# for txt in txts:
+#     MODEL_NAME = txt.split('\\')[1]
+#     model_output = pd.read_csv(txt, sep='\t', header=None).rename(columns={0:'Layer', 1:'inRatio', 2:'outRatio', 3:'in-out'})
+#     print(model_output)
+#     layers = list(model_output['Layer'].drop_duplicates())
+#     model_output_t = pd.DataFrame()
+#     for layer in layers:
+#         model_output_copy = model_output.copy()
+#         model = list(model_output_copy[model_output_copy['Layer'] == layer]['in-out'])
+#         model_output_t[layer] = model
+#     model_output_t['Max'] = model_output_t.max(axis=1)
+#     model_category_table[MODEL_NAME] = list(model_output_t['Max'])
+
+# print(model_category_table)
