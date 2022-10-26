@@ -161,7 +161,7 @@ class Matrix_Evaluator:
             network_name, p_vecR_context_vs_category = context_category_pairwise_ttest(layer_vector, self.M_FILES, model_name, self.ratio_context, self.ratio_category)
 
             # Create and save context/categories ratios and p-values, concatonate with previous results
-            data_matrix=[network_name, layer_vector, mn_vec_context, p_vec1_context, p_vecR_context, context_error_bars, mn_vec_category, p_vec1_category, p_vecR_category, category_error_bars, p_vecR_context_vs_category]
+            data_matrix=[network_name, layer_vector, mn_vec_context, p_vec1_context, p_vecR_context, context_error_bars, mn_vec_category, p_vec1_category, p_vecR_category, category_error_bars, p_vecR_context_vs_category, self.use_confounds]
             df=pd.DataFrame(np.array(data_matrix).T,columns=COL_NAMES)
             df.to_csv(f"{self.path_to_file}/{MODEL_NAME}{self.MATRIX_RATIOS_NAME}.csv")
             self.in_context_values, self.out_context_values, self.ratio_context = [], [], [] # reset context lists

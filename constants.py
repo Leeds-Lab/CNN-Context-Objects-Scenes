@@ -69,7 +69,8 @@ PCAT1 =  'pCat1'
 PCATREL =  'pCatRel'
 CATERRBARS =  'Category Error Bars'
 PCONVCAT = 'pConVCat'
-COL_NAMES = [NETWORK, LAYER, RATIOCON, PCON1, PCONREL, CONERRBARS, RATIOCAT, PCAT1, PCATREL, CATERRBARS, PCONVCAT]
+USEDCONFOUNDS = 'Used Confounds'
+COL_NAMES = [NETWORK, LAYER, RATIOCON, PCON1, PCONREL, CONERRBARS, RATIOCAT, PCAT1, PCATREL, CATERRBARS, PCONVCAT, USEDCONFOUNDS]
 
 # File names of the results for "compute_ratios()"" in "analytical_tools/context_category_matrices.py"
 RAW_CONTEXT_RATIOS_FILE = 'raw_context_ratios.txt'
