@@ -24,7 +24,7 @@ all_args.add_argument("-run_net_responses", "--run_net_responses", default=1)
 all_args.add_argument("-run_compute_ratios", "--run_compute_ratios", default=1)
 all_args.add_argument("-pearson_charts", "--pearson_charts", default=1)
 all_args.add_argument("-pearson", '--pearson', default=1)
-all_args.add_argument("-confounds", '--confounds', default=0) # different data probably won't have confounds - changed to False
+all_args.add_argument("-confounds", '--confounds', default=1) # different data probably won't have confounds - change to False
 all_args.add_argument("-hog_pixel_similarity", "--hog_pixel_similarity", default=0)
 
 # models

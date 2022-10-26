@@ -5,12 +5,12 @@ import pandas as pd
 
 # These few lines of code takes loops through the output files and saves a copy of model layer data and model graphs
 # to one location (./outputs/models/all_model_outputs)
-all_models_path = './outputs/Aminoff2022/models/all_models/'
+all_models_path = './outputs/Aminoff2022_71/models/all_models/'
 if os.path.exists(all_models_path) == False: os.mkdir(all_models_path)
 
 # Aggregate model layer data into a single table
 def agg_model_tables(all_models_path):
-    csvs = glob.glob('./outputs/Aminoff2022/models/*/*/*.csv')
+    csvs = glob.glob('./outputs/Aminoff2022_71/models/*/*/*.csv')
     tables_path = all_models_path + 'tables/'
     if os.path.exists(tables_path) == False: os.mkdir(tables_path)
     all_model_outputs = pd.DataFrame()
@@ -22,7 +22,7 @@ def agg_model_tables(all_models_path):
 
 # Save all .jpg graph outputs
 def agg_figures(all_models_path):
-    graphs = glob.glob('./outputs/Aminoff2022/models/*/*/*.jpg')
+    graphs = glob.glob('./outputs/Aminoff2022_71/models/*/*/*.jpg')
     figures_path = all_models_path + 'figures/'
     if os.path.exists(figures_path) == False: os.mkdir(figures_path)
     for graph in graphs:
@@ -50,10 +50,10 @@ def agg_max_model_tables(txts, output_path):
     model_table.index += 1
     model_table.to_csv(output_path)
 
-raw_category_data = glob.glob('./outputs/Aminoff2022/models/*/*/raw_category_ratios.txt')
+raw_category_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_category_ratios.txt')
 r_category_path = f'{tables_path}max_categories.csv'
 agg_max_model_tables(raw_category_data, r_category_path)
 
-raw_context_data = glob.glob('./outputs/Aminoff2022/models/*/*/raw_context_ratios.txt')
+raw_context_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_context_ratios.txt')
 r_context_path = f'{tables_path}max_contexts.csv'
 agg_max_model_tables(raw_category_data, r_context_path)
