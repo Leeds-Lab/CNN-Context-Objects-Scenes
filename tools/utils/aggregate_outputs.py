@@ -5,34 +5,35 @@ import pandas as pd
 
 # These few lines of code takes loops through the output files and saves a copy of model layer data and model graphs
 # to one location (./outputs/models/all_model_outputs)
-all_models_path = './outputs/Aminoff2022_71/models/all_models/'
-if os.path.exists(all_models_path) == False: os.mkdir(all_models_path)
+OUTPUT_DATA_PATH = './outputs/Aminoff2022_71/models/' 
+ALL_MODELS_PATH = OUTPUT_DATA_PATH + 'all_models/'
+
+if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
 
 # Aggregate model layer data into a single table
-def agg_model_tables(all_models_path):
-    csvs = glob.glob('./outputs/Aminoff2022_71/models/*/*/*.csv')
-    tables_path = all_models_path + 'tables/'
-    if os.path.exists(tables_path) == False: os.mkdir(tables_path)
+def agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH):
+    csvs = glob.glob(OUTPUT_DATA_PATH + '*/*/*.csv')
+    TABLES_PATH = ALL_MODELS_PATH + 'tables/'
+    if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
     all_model_outputs = pd.DataFrame()
     for csv in csvs:
         model_output = pd.read_csv(csv)
-        MODEL_NAME = model_output['Network Name'].drop_duplicates()[0]
         all_model_outputs = pd.concat([all_model_outputs, model_output]).drop('Unnamed: 0', axis=1)
-    all_model_outputs.to_csv(tables_path + 'all_model_outputs.csv')
+    all_model_outputs.to_csv(TABLES_PATH + 'all_model_outputs.csv')
 
 # Save all .jpg graph outputs
-def agg_figures(all_models_path):
-    graphs = glob.glob('./outputs/Aminoff2022_71/models/*/*/*.jpg')
-    figures_path = all_models_path + 'figures/'
-    if os.path.exists(figures_path) == False: os.mkdir(figures_path)
+def agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH):
+    graphs = glob.glob(OUTPUT_DATA_PATH + '*/*/*.jpg')
+    FIGURES_PATH = ALL_MODELS_PATH + 'figures/'
+    if os.path.exists(FIGURES_PATH) == False: os.mkdir(FIGURES_PATH)
     for graph in graphs:
-        shutil.copy(graph, figures_path)
+        shutil.copy(graph, FIGURES_PATH)
 
 
 # Select highest in-out ratio per context or category within-model and 
 # aggregate in-out ratio data for each context across models
-tables_path = all_models_path + 'tables/'
-if os.path.exists(tables_path) == False: os.mkdir(tables_path)
+TABLES_PATH = ALL_MODELS_PATH + 'tables/'
+if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
 
 def agg_max_model_tables(txts, output_path):
     model_table = pd.DataFrame()
@@ -50,10 +51,14 @@ def agg_max_model_tables(txts, output_path):
     model_table.index += 1
     model_table.to_csv(output_path)
 
+
+agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
+agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
+
 raw_category_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_category_ratios.txt')
-r_category_path = f'{tables_path}max_categories.csv'
+r_category_path = f'{TABLES_PATH}max_categories.csv'
 agg_max_model_tables(raw_category_data, r_category_path)
 
 raw_context_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_context_ratios.txt')
-r_context_path = f'{tables_path}max_contexts.csv'
+r_context_path = f'{TABLES_PATH}max_contexts.csv'
 agg_max_model_tables(raw_category_data, r_context_path)
