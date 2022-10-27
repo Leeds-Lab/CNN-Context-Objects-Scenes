@@ -55,10 +55,10 @@ def agg_max_model_tables(txts, output_path):
 agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
 agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
 
-raw_category_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_category_ratios.txt')
+raw_category_data = glob.glob('./outputs/Aminoff2022_71/models/*/Pearson\'s Correlations/raw_category_ratios.txt')
 r_category_path = f'{TABLES_PATH}max_categories.csv'
 agg_max_model_tables(raw_category_data, r_category_path)
 
-raw_context_data = glob.glob('./outputs/Aminoff2022_71/models/*/*/raw_context_ratios.txt')
+raw_context_data = glob.glob('./outputs/Aminoff2022_71/models/*/Pearson\'s Correlations/raw_context_ratios.txt')
 r_context_path = f'{TABLES_PATH}max_contexts.csv'
-agg_max_model_tables(raw_category_data, r_context_path)
+agg_max_model_tables(raw_context_data, r_context_path)
