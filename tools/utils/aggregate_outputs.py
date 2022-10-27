@@ -5,7 +5,7 @@ import pandas as pd
 
 # These few lines of code takes loops through the output files and saves a copy of model layer data and model graphs
 # to one location (./outputs/models/all_model_outputs)
-OUTPUT_DATA_PATH = './outputs/Aminoff2022_71/models/' 
+OUTPUT_DATA_PATH = './outputs/Aminoff2022_73/models/' 
 ALL_MODELS_PATH = OUTPUT_DATA_PATH + 'all_models/'
 
 if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
@@ -55,10 +55,10 @@ def agg_max_model_tables(txts, output_path):
 agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
 agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
 
-raw_category_data = glob.glob('./outputs/Aminoff2022_71/models/*/Pearson\'s Correlations/raw_category_ratios.txt')
+raw_category_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_category_ratios.txt')
 r_category_path = f'{TABLES_PATH}max_categories.csv'
 agg_max_model_tables(raw_category_data, r_category_path)
 
-raw_context_data = glob.glob('./outputs/Aminoff2022_71/models/*/Pearson\'s Correlations/raw_context_ratios.txt')
+raw_context_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_context_ratios.txt')
 r_context_path = f'{TABLES_PATH}max_contexts.csv'
 agg_max_model_tables(raw_context_data, r_context_path)
