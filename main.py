@@ -1,5 +1,6 @@
 import argparse
 import os
+import pandas as pd
 from tools.model_tools.network_responses import Network_Evaluator
 from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
 from tools.analytical_tools.matrix_tools.linecharts import create_linecharts
@@ -8,7 +9,7 @@ from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
 from constants import ALEXNET, ALEXNET_PLACES365, GOOGLENET, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RESNET50_PLACES365, RESNEXT50_32X4D, SHALLOW_MODEL, DEEP_MODEL, VGG16, VGG19
-from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER
+from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE
 
 # Two categories per context and five pictures per category
 # This code can be adjusted to reflect your actual data and desired analysis
@@ -26,6 +27,7 @@ all_args.add_argument("-pearson_charts", "--pearson_charts", default=1)
 all_args.add_argument("-pearson", '--pearson', default=1)
 all_args.add_argument("-confounds", '--confounds', default=1) # different data probably won't have confounds - change to False
 all_args.add_argument("-hog_pixel_similarity", "--hog_pixel_similarity", default=0)
+all_args.add_argument("-vgg16_contexts", "--vgg16_contexts", default=1) # produces contexts for vgg16 to compare with behavioral data in Aminoff et al. 2022
 
 # models
 all_args.add_argument("-all_models", "--all_models", default=0)
@@ -112,3 +114,19 @@ if __name__ == "__main__":
     if int(args["hog_pixel_similarity"]) == 1:
         Hog_Pixels = Hog_And_Pixels()
         Hog_Pixels.get_hog_and_pixel_data()
+
+    if int(args["vgg16_contexts"] == 1):
+        layer_list = Shallow_CNN(SHALLOW_MODEL[VGG16]).convolution_layers()
+        PATH = OUTPUT_MODELS_PATH + VGG16 + PEARSON_PATH
+        CONTEXT_FILE = PATH + RAW_CONTEXT_RATIOS_FILE
+        try:
+            ratios = pd.read_csv(CONTEXT_FILE, sep="\t", header=None).rename(columns={0:'Layer', 1:'in', 2:'out', 3:'in-out'})
+        except:
+            print(f"{VGG16} context ratios path not found.")
+        
+        ratios = ratios[ratios['Layer'].isin(layer_list)][['Layer', 'in-out']]
+        transformed_ratios = pd.DataFrame()
+        for i in layer_list:
+            transformed_ratios[i] = list(ratios[ratios['Layer'] == i]['in-out'])
+        transformed_ratios.index += 1
+        transformed_ratios.to_csv(PATH + "transformed_context_ratios.csv")
