@@ -3,11 +3,11 @@ from models.load_weights import Models
 
 # Static path variables
 DATA_NAME = 'Aminoff2022_73'
-CONTEXT_CONFOUNDS = 'confounding_data/73-confounds/context_confounds.txt'
-CATEGORY_CONFOUNDS = 'confounding_data/73-confounds/category_confounds.txt'
+CONTEXT_CONFOUNDS = f'confounding_data/{DATA_NAME}/context_confounds.txt'
+CATEGORY_CONFOUNDS = f'confounding_data/{DATA_NAME}/category_confounds.txt'
 
-DATA_PATH = './data/' + DATA_NAME + '/'
-OUTPUT_PATH = './outputs/' + DATA_NAME + '/'
+DATA_PATH = f'./data/{DATA_NAME}/'
+OUTPUT_PATH = f'./outputs/{DATA_NAME}/'
 OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
 PEARSON_PATH = "/Pearson\'s Correlations/"
 
