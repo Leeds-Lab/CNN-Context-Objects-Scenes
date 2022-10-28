@@ -5,10 +5,10 @@ import pandas as pd
 
 # These few lines of code takes loops through the output files and saves a copy of model layer data and model graphs
 # to one location (./outputs/models/all_model_outputs)
-OUTPUT_DATA_PATH = './outputs/Aminoff2022_73/models/' 
-ALL_MODELS_PATH = OUTPUT_DATA_PATH + 'all_models/'
+# OUTPUT_DATA_PATH = './outputs/Aminoff2022_73/models/' 
+# ALL_MODELS_PATH = OUTPUT_DATA_PATH + 'all_models/'
 
-if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
+# if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
 
 # Aggregate model layer data into a single table
 def agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH):
@@ -32,8 +32,8 @@ def agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH):
 
 # Select highest in-out ratio per context or category within-model and 
 # aggregate in-out ratio data for each context across models
-TABLES_PATH = ALL_MODELS_PATH + 'tables/'
-if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
+# TABLES_PATH = ALL_MODELS_PATH + 'tables/'
+# if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
 
 def agg_max_model_tables(txts, output_path):
     model_table = pd.DataFrame()
@@ -52,13 +52,13 @@ def agg_max_model_tables(txts, output_path):
     model_table.to_csv(output_path)
 
 
-agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
-agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
+# agg_model_tables(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
+# agg_figures(OUTPUT_DATA_PATH, ALL_MODELS_PATH)
 
-raw_category_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_category_ratios.txt')
-r_category_path = f'{TABLES_PATH}max_categories.csv'
-agg_max_model_tables(raw_category_data, r_category_path)
+# raw_category_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_category_ratios.txt')
+# r_category_path = f'{TABLES_PATH}max_categories.csv'
+# agg_max_model_tables(raw_category_data, r_category_path)
 
-raw_context_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_context_ratios.txt')
-r_context_path = f'{TABLES_PATH}max_contexts.csv'
-agg_max_model_tables(raw_context_data, r_context_path)
+# raw_context_data = glob.glob('./outputs/Aminoff2022_73/models/*/Pearson\'s Correlations/raw_context_ratios.txt')
+# r_context_path = f'{TABLES_PATH}max_contexts.csv'
+# agg_max_model_tables(raw_context_data, r_context_path)

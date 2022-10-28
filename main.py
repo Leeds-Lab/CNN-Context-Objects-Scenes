@@ -1,5 +1,6 @@
 import argparse
 import os
+import glob
 import pandas as pd
 from tools.model_tools.network_responses import Network_Evaluator
 from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
@@ -8,9 +9,10 @@ from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
-from models.load_weights import ALEXNET, ALEXNET_PLACES365, GOOGLENET, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, RESNET50_PLACES365, RESNEXT50_32X4D, VGG16, VGG19
-from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, SHALLOW_MODEL, DEEP_MODEL
+from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET18, RESNET18_PLACES365, RESNET50, RESNET50_PLACES365, RESNEXT50_32X4D, RESNET101, RESNET152, GOOGLENET, GRCNN55
+from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RAW_CATEGORY_RATIOS_FILE, SHALLOW_MODEL, DEEP_MODEL
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE
+from tools.utils.aggregate_outputs import agg_model_tables, agg_figures, agg_max_model_tables
 
 # Two categories per context and five pictures per category
 # This code can be adjusted to reflect your actual data and desired analysis
@@ -111,6 +113,23 @@ if __name__ == "__main__":
                 PATH = OUTPUT_MODELS_PATH + MODEL + PEARSON_PATH + MODEL
                 FILE_PATH = PATH + "_pearson_ratios.csv"
                 create_linecharts(PATH, FILE_PATH, MODEL, layer_list)
+            
+            ALL_MODELS_PATH = OUTPUT_MODELS_PATH + 'all_models/'
+            if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
+            # Select highest in-out ratio per context or category within-model and 
+            # aggregate in-out ratio data for each context across models
+            TABLES_PATH = ALL_MODELS_PATH + 'tables/'
+            if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
+
+            agg_model_tables(OUTPUT_MODELS_PATH, ALL_MODELS_PATH)
+            agg_figures(OUTPUT_MODELS_PATH, ALL_MODELS_PATH)
+            raw_category_data = glob.glob(f'{OUTPUT_MODELS_PATH}*{PEARSON_PATH}{RAW_CATEGORY_RATIOS_FILE}')
+            r_category_path = f'{TABLES_PATH}max_categories.csv'
+            agg_max_model_tables(raw_category_data, r_category_path)
+
+            raw_context_data = glob.glob(f'{OUTPUT_MODELS_PATH}*{PEARSON_PATH}{RAW_CONTEXT_RATIOS_FILE}')
+            r_context_path = f'{TABLES_PATH}max_contexts.csv'
+            agg_max_model_tables(raw_context_data, r_context_path)
 
     if int(args["hog_pixel_similarity"]) == 1:
         Hog_Pixels = Hog_And_Pixels()
