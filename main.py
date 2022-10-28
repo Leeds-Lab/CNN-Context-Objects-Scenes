@@ -8,7 +8,8 @@ from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
-from constants import ALEXNET, ALEXNET_PLACES365, GOOGLENET, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RESNET50_PLACES365, RESNEXT50_32X4D, SHALLOW_MODEL, DEEP_MODEL, VGG16, VGG19
+from models.load_weights import ALEXNET, ALEXNET_PLACES365, GOOGLENET, RESNET101, RESNET18_PLACES365, RESNET50, RESNET152, RESNET18, GRCNN55, RESNET50_PLACES365, RESNEXT50_32X4D, VGG16, VGG19
+from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, SHALLOW_MODEL, DEEP_MODEL
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE
 
 # Two categories per context and five pictures per category

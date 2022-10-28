@@ -1,40 +1,11 @@
 import os
 from models.load_weights import Models
 
-# CNN Model Names
-ALEXNET = "AlexNet"
-ALEXNET_PLACES365 = "AlexNet_Places365"
-VGG16 = "Vgg16"
-VGG19 = "Vgg19"
-RESNET18 = "ResNet18"
-RESNET18_PLACES365 = "ResNet18_Places365"
-RESNET50 = "ResNet50"
-RESNET50_PLACES365 = "ResNet50_Places365"
-RESNEXT50_32X4D = "Resnext50_32x4d"
-RESNET101 = "ResNet101"
-RESNET152 = "ResNet152"
-GOOGLENET = "GoogLeNet"
-GRCNN55 = "GRCNN55"
-
-# Shallow and Deep models available with loaded weights for analyzing layer/neuron responsiveness to context/category information
-SHALLOW_MODEL = {
-    ALEXNET: Models.alexnet(),
-    VGG16: Models.vgg16(),
-    VGG19: Models.vgg19(),
-    # ALEXNET_PLACES365: Models.alexnet_places365() # uncomment when pretrained weights path is available
-}
-
-DEEP_MODEL = {
-    RESNET18: Models.resnet18(),
-    # RESNET18_PLACES365: Models.resnet18_places365(), # uncomment when pretrained weights path is available
-    RESNET50: Models.resnet50(),
-    # RESNET50_PLACES365: Models.resnet50_places365(), # uncomment when pretrained weights path is available
-    # RESNEXT50_32X4D: Models.resnext50_32x4d(),
-    RESNET101: Models.resnet101(),
-    RESNET152: Models.resnet152(),
-    GOOGLENET: Models.googlenet(),
-    # GRCNN55: Models.grcnn55() # uncomment when pretrained weights path is available
-}
+# Load shallow and deep models
+PyTorch_Models = Models()
+PyTorch_Models.load_pytorch_models()
+SHALLOW_MODEL = PyTorch_Models.shallow_model
+DEEP_MODEL = PyTorch_Models.deep_model
 
 # Static path variables
 DATA_NAME = 'Aminoff2022_73'
