@@ -47,7 +47,7 @@ class T_Tests:
     def imagenet_vs_places365(self):
         table = self.table.copy()
         t_test_type = 'ImageNet vs Places365'
-        table['Averages (Imagenet)'] = table[[ALEXNET, VGG16, VGG19, GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152]].mean(axis=1)
+        table['Averages (Imagenet)'] = table[[ALEXNET, VGG16, VGG19, GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]].mean(axis=1)
         table['Averages (Places365)'] = table[[ALEXNET_PLACES365, RESNET18_PLACES365, RESNET50_PLACES365]].mean(axis=1)
         statistic, p_value = stats.ttest_rel(table['Averages (Imagenet)'], table['Averages (Places365)'])
         self.results_table.loc[len(self.results_table)] = [t_test_type, self.table_type, statistic, p_value]
@@ -56,7 +56,7 @@ class T_Tests:
         table = self.table.copy()
         t_test_type = 'Shallow vs Deep'
         table['Averages (Shallow)'] = table[[ALEXNET, VGG16, VGG19]].mean(axis=1)
-        table['Averages (Deep)'] = table[[GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152]].mean(axis=1)
+        table['Averages (Deep)'] = table[[GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]].mean(axis=1)
         statistic, p_value = stats.ttest_rel(table['Averages (Shallow)'], table['Averages (Deep)'])
         self.results_table.loc[len(self.results_table)] = [t_test_type, self.table_type, statistic, p_value]
         
