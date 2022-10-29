@@ -6,6 +6,7 @@ from tools.model_tools.network_responses import Network_Evaluator
 from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
 from tools.analytical_tools.matrix_tools.linecharts import create_linecharts
 from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
+from tools.analytical_tools.t_test_statistics import T_Tests
 
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
@@ -31,6 +32,7 @@ all_args.add_argument("-pearson", '--pearson', default=1)
 all_args.add_argument("-confounds", '--confounds', default=1) # different data probably won't have confounds - change to False
 all_args.add_argument("-hog_pixel_similarity", "--hog_pixel_similarity", default=0)
 all_args.add_argument("-vgg16_contexts", "--vgg16_contexts", default=1) # produces contexts for vgg16 to compare with behavioral data in Aminoff et al. 2022
+all_args.add_argument("-ttests", "--ttests", default=1) # run t-test analyses in the manner done by Aminoff et al. 2022
 
 # models
 all_args.add_argument("-all_models", "--all_models", default=0)
@@ -135,7 +137,7 @@ if __name__ == "__main__":
         Hog_Pixels = Hog_And_Pixels()
         Hog_Pixels.get_hog_and_pixel_data()
 
-    if int(args["vgg16_contexts"] == 1):
+    if int(args["vgg16_contexts"]) == 1:
         layer_list = Shallow_CNN(SHALLOW_MODEL[VGG16]).convolution_layers()
         PATH = OUTPUT_MODELS_PATH + VGG16 + PEARSON_PATH
         CONTEXT_FILE = PATH + RAW_CONTEXT_RATIOS_FILE
@@ -150,3 +152,28 @@ if __name__ == "__main__":
             transformed_ratios[i] = list(ratios[ratios['Layer'] == i]['in-out'])
         transformed_ratios.index += 1
         transformed_ratios.to_csv(PATH + "transformed_context_ratios.csv")
+
+    if int(args["ttests"]) == 1:
+        basePath = './outputs/Aminoff2022_73/models/all_models/'
+        max_categories = basePath + 'tables/max_categories.csv'
+        max_contexts = basePath + 'tables/max_contexts.csv'
+        vgg16_path = f'./outputs/Aminoff2022_73/models/{VGG16}/Pearson\'s Correlations/transformed_context_ratios.csv'
+        REMOVE_MODELS = [RESNEXT50_32X4D]
+        IMAGENET_MODELS = [ALEXNET, VGG16, VGG19, GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]
+        PLACES365_MODELS = [ALEXNET_PLACES365, RESNET18_PLACES365, RESNET50_PLACES365]
+        SHALLOW = [ALEXNET, VGG16, VGG19]
+        DEEP = [GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]
+
+        Max_Categories_T_Tests = T_Tests(max_categories, 'Category', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW, DEEP)
+        Max_Categories_T_Tests.run_suite()
+        category_results = Max_Categories_T_Tests.results_table
+
+        Max_Contexts_T_Tests = T_Tests(max_contexts, 'Context', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW, DEEP)
+        Max_Contexts_T_Tests.run_suite()
+        context_results = Max_Contexts_T_Tests.results_table
+
+        vgg16_layers_results = T_Tests.vgg16_layers_vs_1(vgg16_path, 'Context', VGG16)
+
+        results = pd.concat([category_results, context_results, vgg16_layers_results]).reset_index().drop('index', axis=1)
+        results.to_csv(basePath + 'tables/T-test Results.txt', sep='\t')
+        print("T-tests completed.")
