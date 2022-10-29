@@ -10,6 +10,10 @@ DATA_PATH = f'./data/{DATA_NAME}/'
 OUTPUT_PATH = f'./outputs/{DATA_NAME}/'
 OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
 PEARSON_PATH = "/Pearson\'s Correlations/"
+ALL_MODELS_PATH = OUTPUT_MODELS_PATH + 'all_models/'
+TABLES_PATH = ALL_MODELS_PATH + 'tables/'
+MAX_CAT_PATH = f'{TABLES_PATH}max_categories.csv'
+MAX_CON_PATH = f'{TABLES_PATH}max_contexts.csv'
 
 # Context/Category information based on data paths, directories, and files contained in these directories
 CONTEXTS = len(os.listdir(DATA_PATH))

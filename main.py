@@ -12,7 +12,7 @@ from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
 from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET18, RESNET18_PLACES365, RESNET50, RESNET50_PLACES365, RESNEXT50_32X4D, RESNET101, RESNET152, GOOGLENET, GRCNN55
 from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RAW_CATEGORY_RATIOS_FILE, SHALLOW_MODEL, DEEP_MODEL
-from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE
+from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE, ALL_MODELS_PATH, TABLES_PATH, MAX_CAT_PATH, MAX_CON_PATH
 from tools.utils.aggregate_outputs import agg_model_tables, agg_figures, agg_max_model_tables
 
 # Two categories per context and five pictures per category
@@ -116,11 +116,9 @@ if __name__ == "__main__":
                 FILE_PATH = PATH + "_pearson_ratios.csv"
                 create_linecharts(PATH, FILE_PATH, MODEL, layer_list)
             
-            ALL_MODELS_PATH = OUTPUT_MODELS_PATH + 'all_models/'
             if os.path.exists(ALL_MODELS_PATH) == False: os.mkdir(ALL_MODELS_PATH)
             # Select highest in-out ratio per context or category within-model and 
             # aggregate in-out ratio data for each context across models
-            TABLES_PATH = ALL_MODELS_PATH + 'tables/'
             if os.path.exists(TABLES_PATH) == False: os.mkdir(TABLES_PATH)
 
             agg_model_tables(OUTPUT_MODELS_PATH, ALL_MODELS_PATH)
@@ -154,26 +152,24 @@ if __name__ == "__main__":
         transformed_ratios.to_csv(PATH + "transformed_context_ratios.csv")
 
     if int(args["ttests"]) == 1:
-        basePath = './outputs/Aminoff2022_73/models/all_models/'
-        max_categories = basePath + 'tables/max_categories.csv'
-        max_contexts = basePath + 'tables/max_contexts.csv'
-        vgg16_path = f'./outputs/Aminoff2022_73/models/{VGG16}/Pearson\'s Correlations/transformed_context_ratios.csv'
+        VGG16_T_CON_PATH = f'{OUTPUT_MODELS_PATH}{VGG16}{PEARSON_PATH}transformed_context_ratios.csv'
         REMOVE_MODELS = [RESNEXT50_32X4D]
         IMAGENET_MODELS = [ALEXNET, VGG16, VGG19, GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]
         PLACES365_MODELS = [ALEXNET_PLACES365, RESNET18_PLACES365, RESNET50_PLACES365]
-        SHALLOW = [ALEXNET, VGG16, VGG19]
-        DEEP = [GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]
 
-        Max_Categories_T_Tests = T_Tests(max_categories, 'Category', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW, DEEP)
+        # Perform Category t-tests
+        Max_Categories_T_Tests = T_Tests(MAX_CAT_PATH, 'Category', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW_MODEL.keys(), DEEP_MODEL.keys())
         Max_Categories_T_Tests.run_suite()
         category_results = Max_Categories_T_Tests.results_table
 
-        Max_Contexts_T_Tests = T_Tests(max_contexts, 'Context', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW, DEEP)
+        # Perform Context t-tests
+        Max_Contexts_T_Tests = T_Tests(MAX_CON_PATH, 'Context', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW_MODEL.keys(), DEEP_MODEL.keys())
         Max_Contexts_T_Tests.run_suite()
         context_results = Max_Contexts_T_Tests.results_table
 
-        vgg16_layers_results = T_Tests.vgg16_layers_vs_1(vgg16_path, 'Context', VGG16)
+        # Perform layer-by-layer t-tests on Vgg16
+        vgg16_layers_results = T_Tests.vgg16_layers_vs_1(VGG16_T_CON_PATH, 'Context', VGG16)
 
         results = pd.concat([category_results, context_results, vgg16_layers_results]).reset_index().drop('index', axis=1)
-        results.to_csv(basePath + 'tables/T-test Results.txt', sep='\t')
+        results.to_csv(f'{TABLES_PATH}T-test Results.txt', sep='\t')
         print("T-tests completed.")
