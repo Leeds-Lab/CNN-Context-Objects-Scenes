@@ -100,4 +100,5 @@ context_results = Max_Contexts_T_Tests.results_table
 
 vgg16_layers_results = T_Tests.vgg16_layers_vs_1(vgg16_path, 'Context')
 
-print(pd.concat([category_results, context_results, vgg16_layers_results]).reset_index().drop('index', axis=1))
+results = pd.concat([category_results, context_results, vgg16_layers_results]).reset_index().drop('index', axis=1)
+results.to_csv(basePath + 'tables/T-test Results.txt', sep='\t')
