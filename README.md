@@ -21,9 +21,6 @@ To assess visual similarity of categories within the data, run:
 python main.py -hog_pixel_similarity 1
 ```
 
-### Note on GRCNN55
-To use pretrained weights for GRCNN55, please visit [Jianf-Wang's GitHub](https://github.com/Jianf-Wang/GRCNN) and use the link for GRCNN-55 provided in Google Drive or Baidu Disk. Save the file in "./models/checkpoints/" directory and uncomment the two function calls in "load_weights.py" Models class.
-
 ### Cite
 If you find this code useful for your work, please cite:
 

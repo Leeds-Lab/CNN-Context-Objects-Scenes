@@ -3,6 +3,7 @@ import requests
 import torch
 import models.GRCNN as Grcnn
 from torchvision import models
+from zipfile import ZipFile
 
 # CNN Model Names
 ALEXNET = "AlexNet"
@@ -43,7 +44,7 @@ class Models:
             RESNET101: self.resnet101(),
             RESNET152: self.resnet152(),
             GOOGLENET: self.googlenet(),
-            # GRCNN55: self.grcnn55() # uncomment when pretrained weights path is available
+            GRCNN55: self.grcnn55()
         }
 
     def alexnet(self):
@@ -85,6 +86,15 @@ class Models:
         arch = 'resnet50'
         return self.get_pretrained_places_model(arch)
 
+    def grcnn55(self):
+        grcnn55_ = Grcnn.grcnn55()
+        model_file = self.get_grcnn_checkpoints()
+        print(model_file)
+        grcnn55_.load_state_dict(torch.load(model_file))
+        grcnn55_.eval()
+        return grcnn55_
+
+    # AlexNet, ResNet18, and ResNet50 weight links can be found at https://github.com/CSAILVision/places365
     def get_pretrained_places_model(self, arch):
         model_file = f'./models/tarballs/{arch}_places365.pth.tar'
         if not os.path.exists(model_file):
@@ -100,8 +110,23 @@ class Models:
         model_places365.eval()
         return model_places365
 
-    # def grcnn55(self):
-    #     grcnn55_ = Grcnn.grcnn55()
-    #     grcnn55_.load_state_dict(torch.load('./models/checkpoints/checkpoint_params_grcnn55.pt'))
-    #     grcnn55_.eval()
-    #     return grcnn55_
+    # From https://github.com/Jianf-Wang/GRCNN as GRCNN-55
+    def get_grcnn_checkpoints(self):
+        directory = './models/checkpoints/'
+        model_file = 'checkpoint_params_grcnn55'
+        path_name = directory + model_file + '.pt'
+
+        # The GRCNN checkpoint is embedded in a zip file, which needs to be extracted from the remote source if a local copy is unavailable
+        if not os.path.exists(path_name):
+            zip_name = directory + model_file + '.zip'
+            print(f"\nDownloading GRCNN55 zip file...")
+            zip_url = 'https://drive.google.com/u/1/uc?id=12SusuxuMttubHIfNqn3gmEqwxLYXU_vZ&export=download&confirm=t&uuid=a13734ee-4da9-421b-b901-55ffed0d3664&at=ALAFpqxmr0Y_-fsxLsNf046vEw2F:1667576104138'
+            grcnn_zip = requests.get(zip_url)
+            with open(zip_name, 'wb') as f: f.write(grcnn_zip.content)
+            print(f"Extracting checkpoint...\n")
+            with ZipFile(zip_name, 'r') as zObject:
+                zObject.extractall(path=directory)
+            os.remove(zip_name)
+            print(f'Done! Checkpoint saved in {directory}')
+        return path_name
+        
