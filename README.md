@@ -13,12 +13,12 @@ Similarity ratios for the neural network analysis are then calculated using the 
 There are other flags available for additional analyses. To run all CNN models used in Aminoff et al. (2022), simply run:
 
 ```
-python main.py -all_models 1
+python main.py -a 1
 ```
 
-To assess visual similarity of categories within the data, run:
+To assess visual similarity of categories within the data using HOG and pixel, run:
 ```
-python main.py -hog_pixel_similarity 1
+python main.py -hps 1
 ```
 
 ### Cite
