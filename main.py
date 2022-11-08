@@ -1,7 +1,7 @@
 import os
 import glob
 import pandas as pd
-from args import make_parser
+from args import parser_cmds
 from tools.model_tools.network_responses import Network_Evaluator
 from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
 from tools.analytical_tools.matrix_tools.linecharts import create_linecharts
@@ -23,7 +23,7 @@ from constants import DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH
 # Check "constants.py" for variable constants data
 
 if __name__ == "__main__":
-    args = make_parser()
+    args = parser_cmds()
 
     # Set up models for use
     models_for_analysis = []

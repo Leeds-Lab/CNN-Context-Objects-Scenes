@@ -1,6 +1,6 @@
 import argparse
 
-def make_parser():
+def parser_cmds():
     all_args = argparse.ArgumentParser(description="Selects the CNN models and analysis we want to run")
 
     # Default arguments for analyses used in Aminoff et al. (2022) 
