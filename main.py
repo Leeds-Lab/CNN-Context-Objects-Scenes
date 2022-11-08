@@ -7,6 +7,7 @@ from tools.analytical_tools.matrix_analyses_con_cat import Matrix_Evaluator
 from tools.analytical_tools.matrix_tools.linecharts import create_linecharts
 from tools.analytical_tools.hog_and_pixel_analysis import Hog_And_Pixels
 from tools.analytical_tools.t_test_statistics import T_Tests
+from tools.utils.create_isoluminance_images import Create_Isoluminants
 
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
 from tools.model_tools.network_parsers.deep_net import Deep_CNN
@@ -14,6 +15,7 @@ from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET
 from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RAW_CATEGORY_RATIOS_FILE, SHALLOW_MODEL, DEEP_MODEL
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE, ALL_MODELS_PATH, TABLES_PATH, MAX_CAT_PATH, MAX_CON_PATH
 from tools.utils.aggregate_outputs import agg_model_tables, agg_figures, agg_max_model_tables
+from constants import DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH
 
 # Two categories per context and five pictures per category
 # This code can be adjusted to reflect your actual data and desired analysis
@@ -54,6 +56,7 @@ all_args.add_argument("-g55", '--grcnn55', default=0, help='GRCNN-55 pretrained 
 all_args.add_argument("-hc", '--h_cluster', default=0, help='perform hierarchical cluster analysis for analyzing --net_responses')
 all_args.add_argument("-mds", '--m_MDS', default=0, help='perform manifold analysis MDS for analyzing --net_responses')
 all_args.add_argument("-tsne", '--m_TSNE', default=0, help='perform manifold analysis t-SNE for analyzing --net_responses')
+all_args.add_argument("-iso", "--isoluminant_images", default=0, help="create and obtain isoluminant images and values for the selected dataset")
 
 args = vars(all_args.parse_args())
 
@@ -173,3 +176,16 @@ if __name__ == "__main__":
         results = pd.concat([category_results, context_results, vgg16_layers_results]).reset_index().drop('index', axis=1)
         results.to_csv(f'{TABLES_PATH}T-test Results.txt', sep='\t')
         print("T-tests completed.")
+
+    if int(args["isoluminant_images"]) == 1:
+        mean = 128  # initial values for mean were 128
+        sd = 25     # initial values for variance were 50
+        fill_threshold = 50
+        calculateLuminance = True
+        calculateIsoLuminance = True
+        countMeanSD = False
+        countPixels = False
+
+        Create_Iso = Create_Isoluminants(DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH, mean, sd, fill_threshold, calculateLuminance, calculateIsoLuminance, countMeanSD, countPixels)
+
+        Create_Iso.run()

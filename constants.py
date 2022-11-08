@@ -53,3 +53,7 @@ COL_NAMES = [NETWORK, LAYER, RATIOCON, PCON1, PCONREL, CONERRBARS, RATIOCAT, PCA
 RAW_CONTEXT_RATIOS_FILE = 'raw_context_ratios.txt'
 RAW_CATEGORY_RATIOS_FILE = 'raw_category_ratios.txt'
 CONCAT_RATIO_DATA_FILE = "all_con_cat_ratios.csv"
+
+# Isoluminant images
+ISOLUMINANT_DATA_PATH = f'./data/{DATA_NAME}-Isoluminant/'
+ISOLUMINANT_OUTPUT_PATH = f'./outputs/{DATA_NAME}/isoluminant_calculation_results/'

@@ -2,10 +2,6 @@ import numpy as np
 from PIL import Image, ImageDraw
 import os
 
-#####################################################################################
-###################################FUNCTIONS#########################################
-#####################################################################################
-
 class Create_Isoluminants:
     def __init__(self, path, new_path, output_path, mean = 128, sd = 25, fill_threshold = 50, calculateLuminance = True, calculateIsoLuminance = True, countMeanSD = False, countPixels = False):
         super(Create_Isoluminants, self).__init__()
@@ -22,7 +18,8 @@ class Create_Isoluminants:
         self.whitePixels = []
 
     #### This function calculates luminance (unmodified images) mean and sd values 
-    def LuminanceyMeansSD(self, path, groupName, numberPerGroup):
+    def LuminanceyMeansSD(self, groupName, numberPerGroup):
+        path, output_path = self.path, self.output_path
         print('Category\tMean\tSD', file=open(output_path + 'Luminance' + groupName + '_M&SD.txt', 'a'))
         categoryMeans = []
         categorySD = []
@@ -57,7 +54,7 @@ class Create_Isoluminants:
     # This function cycles through an image directory, replaces a white background with grey
     # based on 'fillThreshold', and tints the whole image gray based on 'mean' and 'sd' values
     def isoluminanceConverter(self):
-        path, new_path, mean, sd, fill_threshold, countMeanSD, countPixels = self.path, self.new_path, self.mean, self.sd, self.fill_threshold, self.countMeanSD, self.countPixels
+        path, new_path, output_path, mean, sd, fill_threshold, countMeanSD, countPixels = self.path, self.new_path, self.output_path, self.mean, self.sd, self.fill_threshold, self.countMeanSD, self.countPixels
         
         contextNum = 0
         print('Attempting image conversions to isoluminant versions...')
@@ -121,11 +118,11 @@ class Create_Isoluminants:
         print(sdValues, file=open(fileName + '_sds.txt', 'a'))
 
     def run(self):
-        new_path, fill_threshold = self.new_path, self.fill_threshold
+        path, new_path, output_path, fill_threshold, calculateLuminance, calculateIsoLuminance, countPixels = self.path, self.new_path, self.output_path, self.fill_threshold, self.calculateLuminance, self.calculateIsoLuminace, self.countPixels
         if not os.path.exists(output_path): os.mkdir(output_path)
         if calculateLuminance == True:
-            self.LuminanceyMeansSD(path, 'Context', 10)
-            self.LuminanceyMeansSD(path, 'Category', 5)
+            self.LuminanceyMeansSD('Context', 10)
+            self.LuminanceyMeansSD('Category', 5)
 
         if calculateIsoLuminance == True:
             print('Checking new filepath...')
@@ -142,21 +139,3 @@ class Create_Isoluminants:
                 print(whitePixels)
                 with open('whitePixels_' + str(fill_threshold) + '_.npy', 'wb') as f:
                     np.save(f, whitePixels)
-
-
-path = './data/Aminoff2022_73/'
-new_path = './data/Aminoff2022_73-Isoluminant/'
-output_path = './outputs/Aminoff2022_73/isoluminant_calculation_results/'
-mean = 128  # initial values for mean were 128
-sd = 25     # initial values for variance were 50
-fill_threshold = 50
-
-
-calculateLuminance = True
-calculateIsoLuminance = True
-countMeanSD = False
-countPixels = False
-
-Create_Iso = Create_Isoluminants(path, new_path, output_path, mean, sd, fill_threshold, calculateLuminance, calculateIsoLuminance, countMeanSD, countPixels)
-
-Create_Iso.run()
