@@ -54,6 +54,14 @@ RAW_CONTEXT_RATIOS_FILE = 'raw_context_ratios.txt'
 RAW_CATEGORY_RATIOS_FILE = 'raw_category_ratios.txt'
 CONCAT_RATIO_DATA_FILE = "all_con_cat_ratios.csv"
 
-# Isoluminant images
+# Isoluminant image constants
 ISOLUMINANT_DATA_PATH = f'./data/{DATA_NAME}-Isoluminant/'
 ISOLUMINANT_OUTPUT_PATH = f'./outputs/{DATA_NAME}/isoluminant_calculation_results/'
+MEAN = 128
+SD = 25     # initial values for variance were 50
+FILL_THRESHOLD = 50
+CALCULATE_LUMINANCE = True
+CALCULATE_ISOLUMINANCE = True
+COUNT_MEANS_SD = False
+COUNT_PIXELS = False
+ISOLUMINANT_VARIABLES = [ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH, MEAN, SD, FILL_THRESHOLD, CALCULATE_LUMINANCE, CALCULATE_ISOLUMINANCE, COUNT_MEANS_SD, COUNT_PIXELS]

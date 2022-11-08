@@ -1,4 +1,5 @@
 import argparse
+from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET18, RESNET18_PLACES365, RESNET50, RESNET50_PLACES365, RESNEXT50_32X4D, RESNET101, RESNET152, GOOGLENET, GRCNN55
 
 def parser_cmds():
     all_args = argparse.ArgumentParser(description="Selects the CNN models and analysis we want to run")
@@ -17,19 +18,19 @@ def parser_cmds():
 
     # models
     all_args.add_argument("-a", "--all_models", default=0, help='use all the models currently available in load_weights.py')
-    all_args.add_argument("-anet", '--alexnet', default=0, help='AlexNet pretrained on ImageNet')
-    all_args.add_argument("-anetp", "--alexnet_places365", default=0, help='AlexNet pretrained on Places365')
-    all_args.add_argument("-v16", "--vgg16", default=0, help='VGG16 pretrained on ImageNet')
-    all_args.add_argument("-v19", "--vgg19", default=0, help='VGG19 pretrained on ImageNet')
-    all_args.add_argument("-r18", '--resnet18', default=0, help='ResNet18 pretrained on ImageNet')
-    all_args.add_argument("-r18p", "--resnet18_places365", default=0, help='ResNet18 pretrained on Places365')
-    all_args.add_argument("-r50", '--resnet50', default=0, help='ResNet50 pretrained on ImageNet')
-    all_args.add_argument("-r50p", "--resnet50_places365", default=0, help='ResNet50 pretrained on Places365')
-    all_args.add_argument("-rx50", '--resnext50_32x4d', default=0, help='ResNext50_32x4d pretrained on ImageNet')
-    all_args.add_argument("-r101", '--resnet101', default=0, help='ResNet101 pretrained on ImageNet')
-    all_args.add_argument("-r152", '--resnet152', default=0, help='ResNet152 pretrained on ImageNet')
-    all_args.add_argument("-gnet", '--googlenet', default=0, help='GoogLeNet pretrained on ImageNet')
-    all_args.add_argument("-g55", '--grcnn55', default=0, help='GRCNN-55 pretrained on ImageNet')
+    all_args.add_argument("-anet", f'--{ALEXNET}', default=0, help='AlexNet pretrained on ImageNet')
+    all_args.add_argument("-anetp", f"--{ALEXNET_PLACES365}", default=0, help='AlexNet pretrained on Places365')
+    all_args.add_argument("-v16", f"--{VGG16}", default=0, help='VGG16 pretrained on ImageNet')
+    all_args.add_argument("-v19", f"--{VGG19}", default=0, help='VGG19 pretrained on ImageNet')
+    all_args.add_argument("-r18", f'--{RESNET18}', default=0, help='ResNet18 pretrained on ImageNet')
+    all_args.add_argument("-r18p", f"--{RESNET18_PLACES365}", default=0, help='ResNet18 pretrained on Places365')
+    all_args.add_argument("-r50", f'--{RESNET50}', default=0, help='ResNet50 pretrained on ImageNet')
+    all_args.add_argument("-r50p", f"--{RESNET50_PLACES365}", default=0, help='ResNet50 pretrained on Places365')
+    all_args.add_argument("-rx50", f'--{RESNEXT50_32X4D}', default=0, help='ResNext50_32x4d pretrained on ImageNet')
+    all_args.add_argument("-r101", f'--{RESNET101}', default=0, help='ResNet101 pretrained on ImageNet')
+    all_args.add_argument("-r152", f'--{RESNET152}', default=0, help='ResNet152 pretrained on ImageNet')
+    all_args.add_argument("-gnet", f'--{GOOGLENET}', default=0, help='GoogLeNet pretrained on ImageNet')
+    all_args.add_argument("-g55", f'--{GRCNN55}', default=0, help='GRCNN-55 pretrained on ImageNet')
 
     # Other arguments include using additional networks and analyses
     all_args.add_argument("-hc", '--h_cluster', default=0, help='perform hierarchical cluster analysis for analyzing --net_responses')

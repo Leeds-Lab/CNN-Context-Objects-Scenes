@@ -15,7 +15,7 @@ from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET
 from constants import OUTPUT_PATH, OUTPUT_MODELS_PATH, PEARSON_PATH, MODELS, RAW_CATEGORY_RATIOS_FILE, SHALLOW_MODEL, DEEP_MODEL
 from constants import DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RAW_CONTEXT_RATIOS_FILE, ALL_MODELS_PATH, TABLES_PATH, MAX_CAT_PATH, MAX_CON_PATH
 from tools.utils.aggregate_outputs import agg_model_tables, agg_figures, agg_max_model_tables
-from constants import DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH
+from constants import DATA_PATH, ISOLUMINANT_VARIABLES
 
 # Two categories per context and five pictures per category
 # This code can be adjusted to reflect your actual data and desired analysis
@@ -28,20 +28,7 @@ if __name__ == "__main__":
     # Set up models for use
     models_for_analysis = []
     if int(args['all_models']) == 1: models_for_analysis = MODELS
-    else:
-        if int(args['alexnet']) == 1: models_for_analysis.append(ALEXNET)
-        if int(args['vgg16']) == 1: models_for_analysis.append(VGG16)
-        if int(args['vgg19']) == 1: models_for_analysis.append(VGG19)
-        if int(args['alexnet_places365']) == 1: models_for_analysis.append(ALEXNET_PLACES365)
-        if int(args['resnet18']) == 1: models_for_analysis.append(RESNET18)
-        if int(args['resnet18_places365']) == 1: models_for_analysis.append(RESNET18_PLACES365)
-        if int(args['resnet50']) == 1: models_for_analysis.append(RESNET50)
-        if int(args['resnet50_places365']) == 1: models_for_analysis.append(RESNET50_PLACES365)
-        if int(args['resnext50_32x4d']) == 1: models_for_analysis.append(RESNEXT50_32X4D)
-        if int(args['resnet101']) == 1: models_for_analysis.append(RESNET101)
-        if int(args['resnet152']) == 1: models_for_analysis.append(RESNET152)
-        if int(args['googlenet']) == 1: models_for_analysis.append(GOOGLENET)
-        if int(args['grcnn55']) == 1: models_for_analysis.append(GRCNN55)
+    else: [models_for_analysis.append(MODEL) for MODEL in MODELS if int(args[MODEL]) == 1]
 
     if len(models_for_analysis) != 0:
         # Set up analyses to be conducted
@@ -55,8 +42,8 @@ if __name__ == "__main__":
         confounds = int(args['confounds'])
         
         # Create output path for models if not present
-        if os.path.exists(OUTPUT_PATH) == False: os.mkdir(OUTPUT_PATH)
-        if os.path.exists(OUTPUT_MODELS_PATH) == False: os.mkdir(OUTPUT_MODELS_PATH)
+        if not os.path.exists(OUTPUT_PATH): os.mkdir(OUTPUT_PATH)
+        if not os.path.exists(OUTPUT_MODELS_PATH): os.mkdir(OUTPUT_MODELS_PATH)
 
         # Process and analyze particular neural network models
         if int(args["net_responses"]) == 1:
@@ -97,10 +84,12 @@ if __name__ == "__main__":
             r_context_path = f'{TABLES_PATH}max_contexts.csv'
             agg_max_model_tables(raw_context_data, r_context_path)
 
+    # Run HOG and pixel similarity on image data
     if int(args["hog_pixel_similarity"]) == 1:
         Hog_Pixels = Hog_And_Pixels()
         Hog_Pixels.get_hog_and_pixel_data()
 
+    # Transform VGG16 context data
     if int(args["vgg16_contexts"]) == 1:
         layer_list = Shallow_CNN(SHALLOW_MODEL[VGG16]).convolution_layers()
         PATH = OUTPUT_MODELS_PATH + VGG16 + PEARSON_PATH
@@ -116,14 +105,14 @@ if __name__ == "__main__":
             transformed_ratios[i] = list(ratios[ratios['Layer'] == i]['in-out'])
         transformed_ratios.index += 1
         transformed_ratios.to_csv(PATH + "transformed_context_ratios.csv")
-
+ 
+    # Perform Category t-tests
     if int(args["ttests"]) == 1:
         VGG16_T_CON_PATH = f'{OUTPUT_MODELS_PATH}{VGG16}{PEARSON_PATH}transformed_context_ratios.csv'
         REMOVE_MODELS = [RESNEXT50_32X4D]
         IMAGENET_MODELS = [ALEXNET, VGG16, VGG19, GOOGLENET, RESNET18, RESNET50, RESNET101, RESNET152, GRCNN55]
         PLACES365_MODELS = [ALEXNET_PLACES365, RESNET18_PLACES365, RESNET50_PLACES365]
 
-        # Perform Category t-tests
         Max_Categories_T_Tests = T_Tests(MAX_CAT_PATH, 'Category', REMOVE_MODELS, VGG16, IMAGENET_MODELS, PLACES365_MODELS, SHALLOW_MODEL.keys(), DEEP_MODEL.keys())
         Max_Categories_T_Tests.run_suite()
         category_results = Max_Categories_T_Tests.results_table
@@ -140,15 +129,9 @@ if __name__ == "__main__":
         results.to_csv(f'{TABLES_PATH}T-test Results.txt', sep='\t')
         print("T-tests completed.")
 
+    # Create isoluminated image data from dataset and analyze
     if int(args["isoluminant_images"]) == 1:
-        mean = 128  # initial values for mean were 128
-        sd = 25     # initial values for variance were 50
-        fill_threshold = 50
-        calculateLuminance = True
-        calculateIsoLuminance = True
-        countMeanSD = False
-        countPixels = False
+        ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH, MEAN, SD, FILL_THRESHOLD, CALCULATE_LUMINANCE, CALCULATE_ISOLUMINANCE, COUNT_MEANS_SD, COUNT_PIXELS = ISOLUMINANT_VARIABLES
 
-        Create_Iso = Create_Isoluminants(DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH, mean, sd, fill_threshold, calculateLuminance, calculateIsoLuminance, countMeanSD, countPixels)
-
+        Create_Iso = Create_Isoluminants(DATA_PATH, ISOLUMINANT_DATA_PATH, ISOLUMINANT_OUTPUT_PATH, MEAN, SD, FILL_THRESHOLD, CALCULATE_LUMINANCE, CALCULATE_ISOLUMINANCE, COUNT_MEANS_SD, COUNT_PIXELS)
         Create_Iso.run()
