@@ -1,6 +1,9 @@
 import os, glob
 import numpy as np
 import pandas as pd
+import re
+import matplotlib.pyplot as plt
+import pickle
 
 from tools.utils import files_setup as fs
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
@@ -32,7 +35,7 @@ class Matrix_Evaluator:
         self.context_confounds, self.category_confounds = [], []
 
     def context_ratio_analysis(self, layer_num):   # for any one layer out of all the layers of the model
-        for k in range(CONTEXTS):   # contexts = 73 in this case, as #17 and #32 were added
+        for k in range(CONTEXTS):   # working on 71 contexts rn
             # outContext
             submatrix_data=np.hstack((self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),:(CONTEXT_EXEMPLARS*k)],self.layer_data[(CONTEXT_EXEMPLARS*k):(CONTEXT_EXEMPLARS*(k+1)),(CONTEXT_EXEMPLARS*(k+1)):]))
             if self.use_confounds: submatrix = context_confound_submat(self.context_confounds, k, submatrix_data)
@@ -74,6 +77,47 @@ class Matrix_Evaluator:
             print(f"{layer_num}\t{in_values}\t{out_values}\t{categoryRatio}", file=open(self.path_to_file + RAW_CATEGORY_RATIOS_FILE, 'a'))
     
     
+    def generate_ratioCurves(self,model_name,Dict, type=None, base_path = None, annotations = None):
+        
+        if type == "category":
+            curves_path = base_path + "/category_curves"
+        else:
+            curves_path = base_path + "/context_curves"
+        
+        if not os.path.exists(curves_path):
+            os.mkdir(curves_path)
+
+        # save the dictionary (pickle) for later use
+        with open(f"{curves_path}/inVal_Ratio_data.pkl","wb") as data_dict:
+            pickle.dump(Dict, data_dict)
+
+        
+        # save csv file from dictionary
+        temp_df = pd.DataFrame()
+        for key, val in Dict.items():
+            temp_df[key+"inVals"] = pd.Series(val[0]).T
+            temp_df[key+"inOutRatios"] = pd.Series(val[1]).T
+
+        temp_df.to_csv(f"{curves_path}/{model_name}_inVal_Ratio.csv")
+
+
+        for key, val in Dict.items():
+            fig, ax = plt.subplots(figsize = (12,10))
+            ax.scatter(val[0],val[1])
+            ax.set_xlabel(f"in{type} Values")
+            ax.set_ylabel("inOutRatios")
+            ax.set_title(f"{key}: invals vs inOut Ratios")
+
+            # add annotations
+            for i in range(len(val[0])):
+                ax.annotate(annotations[i], (val[0][i], val[1][i]+0.02))
+            plt.savefig(f"{curves_path}/{model_name}_{key}.png")
+
+        return 
+        
+
+    
+    
     def getExtremeVals(self,dataframe):
         topTen = dict()
         botTen = dict()
@@ -107,14 +151,21 @@ class Matrix_Evaluator:
             
             # Context/Category Ratio analysis for each layer
 
+            # get mappings of filenames
             CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH)]
-            ALL_FILES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
+            TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
+            pattern = re.compile(r"\(\d+\).jpg")
+            for file_name in range(len(TEMP_FILENAMES)):
+                TEMP_FILENAMES[file_name] = re.sub(pattern,"",TEMP_FILENAMES[file_name])
+
             CATEGORY_NAMES = list()
-            for i in range(1,len(ALL_FILES),5):
-                CATEGORY_NAMES.append(ALL_FILES[i])
+            for i in range(1,len(TEMP_FILENAMES),5):
+                CATEGORY_NAMES.append(TEMP_FILENAMES[i])
             
             layCon = dict()
             layCat = dict()
+            check_cats = dict()
+            check_cons = dict()
 
 
 
@@ -123,11 +174,29 @@ class Matrix_Evaluator:
                 self.layer_data = np.load(layers_paths[i])     
                 self.context_ratio_analysis(i)                  
 
-                layCon[f"Layer{i+1}"] = self.ratio_context[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]   
+                layCon[f"Layer{i+1}"] = self.ratio_context[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]  
+                check_cons[f"Layer{i+1}"] = list()
+                check_cons[f"Layer{i+1}"].append(self.in_context_values[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]) 
+                check_cons[f"Layer{i+1}"].append(self.ratio_context[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
 
                 self.category_ratio_analysis(i)
-                layCat[f"Layer{i+1}"] = self.ratio_category[(CATEGORIES*i):(CATEGORIES*i)+CATEGORIES] 
+                
+                layCat[f"Layer{i+1}"] = self.ratio_category[(CATEGORIES*i):(CATEGORIES*i)+CATEGORIES]
+                check_cats[f"Layer{i+1}"] = list()
+                check_cats[f"Layer{i+1}"].append(self.in_category_values[(CATEGORIES*i):(CATEGORIES*i)+CATEGORIES]) 
+                check_cats[f"Layer{i+1}"].append(self.ratio_category[(CATEGORIES*i):(CATEGORIES*i)+CATEGORIES]) 
 
+            
+            # plot curves
+            RATIO_CURVES_PATH = OUTPUT_MODELS_PATH + MODEL_NAME + "/inVal_ratioCurves"
+            if not os.path.exists(RATIO_CURVES_PATH):
+                os.mkdir(RATIO_CURVES_PATH)
+            
+
+            self.generate_ratioCurves(MODEL_NAME,check_cons, type = "context", base_path= RATIO_CURVES_PATH, annotations=CONTEXT_NAMES)
+            self.generate_ratioCurves(MODEL_NAME,check_cats, type = "category", base_path= RATIO_CURVES_PATH, annotations=CATEGORY_NAMES)
+
+            
             # create dataframes of ratios at each layer and map to context/category names
             
             layCon_df = pd.DataFrame(layCon)
@@ -144,10 +213,10 @@ class Matrix_Evaluator:
 
             topTenContexts, bottomTenContexts = self.getExtremeVals(layCon_df)   # these functions return pd.dataframes top most and bottom most inOut Ratios across layers
             topTenCategories, bottomTenCategories = self.getExtremeVals(layCat_df)
-            topTenContexts.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME +"/topTenContexts.csv")
-            bottomTenContexts.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME +"/bottomTenContexts.csv")
-            topTenCategories.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME + "/topTenCategories.csv")
-            bottomTenCategories.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME + "/bottomTenCategories.csv")
+            topTenContexts.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME +f"/{MODEL_NAME}_topTenContexts.csv")
+            bottomTenContexts.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME +f"/{MODEL_NAME}_bottomTenContexts.csv")
+            topTenCategories.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME + f"/{MODEL_NAME}_topTenCategories.csv")
+            bottomTenCategories.to_csv(OUTPUT_MODELS_PATH + MODEL_NAME + f"/{MODEL_NAME}_bottomTenCategories.csv")
 
 
             
@@ -163,7 +232,7 @@ class Matrix_Evaluator:
             # populate a column to clarify whether confounds were used or not
             if self.use_confounds: confounds_removed = [True] * len(network_name)
             else: confounds_removed = [False] * len(network_name)
-            
+
             # Create and save context/categories ratios and p-values, concatonate with previous results
             data_matrix=[network_name, layer_vector, mn_vec_context, p_vec1_context, p_vecR_context, context_error_bars, mn_vec_category, p_vec1_category, p_vecR_category, category_error_bars, p_vecR_context_vs_category, confounds_removed]
             df=pd.DataFrame(np.array(data_matrix).T,columns=COL_NAMES)

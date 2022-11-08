@@ -2,7 +2,7 @@ import os
 from models.load_weights import Models
 
 # Static data path variables
-DATA_NAME = 'Aminoff2022_73'
+DATA_NAME = 'Aminoff2022_71'
 CONTEXT_CONFOUNDS = f'confounding_data/{DATA_NAME}/context_confounds.txt'
 CATEGORY_CONFOUNDS = f'confounding_data/{DATA_NAME}/category_confounds.txt'
 
