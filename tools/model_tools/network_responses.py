@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+import pickle
 from tools.model_tools.neuron_retrieval import Extractor
 from tools.utils import files_setup as fs
 from tools.analytical_tools.cnn_analysis import Analytics_Suite
@@ -7,7 +9,7 @@ from constants import SHALLOW_MODEL, DEEP_MODEL
 
 # This class extracts maximum firing neurons using Extractor and runs analyses for each layer
 class Network_Evaluator:
-    def __init__(self, models_for_analysis, batch_analysis, DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER):
+    def __init__(self, models_for_analysis, batch_analysis, DIRECTORIES_FOR_ANALYSIS, START_FILE_NUMBER, END_FILE_NUMBER, RESPONSES_PATH):
         super(Network_Evaluator, self).__init__()
         self.models_for_analysis = models_for_analysis
         self.batch_analysis = batch_analysis
@@ -15,6 +17,7 @@ class Network_Evaluator:
         self.START_FILE_NUMBER = START_FILE_NUMBER
         self.END_FILE_NUMBER = END_FILE_NUMBER
         self.failed_images = []
+        self.Network_Responses_Path = RESPONSES_PATH
 
     def max_neuron_layer_data(self):
         current_file = self.START_FILE_NUMBER - 1
@@ -67,7 +70,16 @@ class Network_Evaluator:
         
         print("Extracting neuron data from each layer...")
         # This extracts and saves the neuron data for each image layer in two dictionaries for subsequent analysis.
-        self.create_neural_layers_dictionary()    
+        self.create_neural_layers_dictionary()
+        
+        print("saving network responses")
+        
+        if not os.path.exists(self.Network_Responses_Path):
+            os.mkdir(self.Network_Responses_Path)
+        
+        with open(f"{self.Network_Responses_Path}/{self.using_model}.pkl","wb") as layers_dict:
+            pickle.dump(self.dictionary,layers_dict)
+            
         print("Done!\n")
         print("************************************")
 

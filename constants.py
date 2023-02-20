@@ -9,6 +9,7 @@ CATEGORY_CONFOUNDS = f'confounding_data/{DATA_NAME}/category_confounds.txt'
 DATA_PATH = f'./data/{DATA_NAME}/'
 OUTPUT_PATH = f'./outputs/{DATA_NAME}/'
 OUTPUT_MODELS_PATH = OUTPUT_PATH + 'models/'
+NETWORK_RESPONSES_PATH = OUTPUT_PATH + "NetworkResponses/"
 PEARSON_PATH = "/Pearson\'s Correlations/"
 ALL_MODELS_PATH = OUTPUT_MODELS_PATH + 'all_models/'
 TABLES_PATH = ALL_MODELS_PATH + 'tables/'
