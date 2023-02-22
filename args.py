@@ -1,5 +1,5 @@
 import argparse
-from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET18, RESNET18_PLACES365, RESNET50, RESNET50_PLACES365, RESNEXT50_32X4D, RESNET101, RESNET152, GOOGLENET, GRCNN55
+from models.load_weights import ALEXNET, ALEXNET_PLACES365, VGG16, VGG19, RESNET18, RESNET18_PLACES365, RESNET50, RESNET50_PLACES365, RESNEXT50_32X4D, RESNET101, RESNET152, GOOGLENET # , GRCNN55
 
 def parser_cmds():
     all_args = argparse.ArgumentParser(description="Selects the CNN models and analysis we want to run")
@@ -30,7 +30,7 @@ def parser_cmds():
     all_args.add_argument("-r101", f'--{RESNET101}', default=0, help='ResNet101 pretrained on ImageNet')
     all_args.add_argument("-r152", f'--{RESNET152}', default=0, help='ResNet152 pretrained on ImageNet')
     all_args.add_argument("-gnet", f'--{GOOGLENET}', default=0, help='GoogLeNet pretrained on ImageNet')
-    all_args.add_argument("-g55", f'--{GRCNN55}', default=0, help='GRCNN-55 pretrained on ImageNet')
+    # all_args.add_argument("-g55", f'--{GRCNN55}', default=0, help='GRCNN-55 pretrained on ImageNet')
 
     # Other arguments include using additional networks and analyses
     all_args.add_argument("-hc", '--h_cluster', default=0, help='perform hierarchical cluster analysis for analyzing --net_responses')

@@ -3,3 +3,4 @@ test.ipynb
 models/tarballs/*
 models/checkpoints/*
 outputs/*
+data/*

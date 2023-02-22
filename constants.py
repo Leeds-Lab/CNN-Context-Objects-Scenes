@@ -21,7 +21,7 @@ CONTEXTS = len(os.listdir(DATA_PATH))
 CATEGORIES = CONTEXTS * 2
 CONTEXT_EXEMPLARS = 10 # same as total number of pictures for each context file
 CATEGORY_EXEMPLARS = int(CONTEXT_EXEMPLARS / 2)
-DIRECTORIES_FOR_ANALYSIS = [DATA_PATH + CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH)]
+DIRECTORIES_FOR_ANALYSIS = [DATA_PATH + CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME]
 START_FILE_NUMBER = 1 
 END_FILE_NUMBER = 10 # same as total number of pictures for each context file
 

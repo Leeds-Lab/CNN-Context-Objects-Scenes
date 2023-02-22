@@ -1,4 +1,4 @@
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 from skimage.feature import hog
 from PIL import Image
 import pandas as pd
@@ -12,7 +12,7 @@ class Hog_And_Pixels:
     def __init__(self):
         super(Hog_And_Pixels, self).__init__()
         self.image_path = ''
-        self.total_images = NULL
+        self.total_images = None
 
     def produce_hog_and_pixels(self, img_path):
         img = Image.open(img_path)

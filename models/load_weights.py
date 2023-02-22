@@ -18,7 +18,7 @@ RESNEXT50_32X4D = "Resnext50_32x4d"
 RESNET101 = "ResNet101"
 RESNET152 = "ResNet152"
 GOOGLENET = "GoogLeNet"
-GRCNN55 = "GRCNN55"
+# GRCNN55 = "GRCNN55"
 
 # Contains call functions for models. GRCNN55, and the Places365 trained models need .pt and .tar files containing weights loaded before use
 class Models:
@@ -44,7 +44,7 @@ class Models:
             RESNET101: self.resnet101(),
             RESNET152: self.resnet152(),
             GOOGLENET: self.googlenet(),
-            GRCNN55: self.grcnn55()
+            # GRCNN55: self.grcnn55()
         }
 
     def alexnet(self):
