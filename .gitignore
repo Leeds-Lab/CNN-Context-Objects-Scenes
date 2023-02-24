@@ -4,3 +4,4 @@ models/tarballs/*
 models/checkpoints/*
 outputs/*
 data/*
+temp.ipynb

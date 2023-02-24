@@ -152,9 +152,9 @@ class Matrix_Evaluator:
             # Context/Category Ratio analysis for each layer
 
             # get mappings of filenames
-            CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH)]
+            CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME]
             TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
-            pattern = re.compile(r"\(\d+\).jpg")
+            pattern = re.compile(r"\(\d+\).jpe?g")
             for file_name in range(len(TEMP_FILENAMES)):
                 TEMP_FILENAMES[file_name] = re.sub(pattern,"",TEMP_FILENAMES[file_name])
 

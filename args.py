@@ -7,17 +7,17 @@ def parser_cmds():
     # Default arguments for analyses used in Aminoff et al. (2022) 
     # Investigate context/category responsiveness in a convolutional neural network by using Pearson's Correlation Coefficient
     # HOG and pixel similarity analysis of the image dataset (needs to be set to 1)
-    all_args.add_argument("-n", "--net_responses", default=1, help="extract cnn model network responses to image data for each convolution layer")
+    all_args.add_argument("-n", "--net_responses", default=0, help="extract cnn model network responses to image data for each convolution layer")
     all_args.add_argument("-c", "--compute_ratios", default=1, help="calculate context and category ratios for each cnn model network using matrix data created from --net_responses")
-    all_args.add_argument("-pch", "--pearson_charts", default=1, help="create context and category line graphs using ratio pearson correlation information obtained from --compute_ratios")
+    all_args.add_argument("-pch", "--pearson_charts", default=0, help="create context and category line graphs using ratio pearson correlation information obtained from --compute_ratios")
     all_args.add_argument("-p", '--pearson', default=1, help="use pearson's correlation for analyzing --net_responses")
-    all_args.add_argument("-cfs", '--confounds', default=1, help="use pairwise confound matrix data containing boolean values along the diagonal and other potentially confounding context/categories to remove values that might affect output results") # different data probably won't have confounds - change to False
+    all_args.add_argument("-cfs", '--confounds', default=0, help="use pairwise confound matrix data containing boolean values along the diagonal and other potentially confounding context/categories to remove values that might affect output results") # different data probably won't have confounds - change to False
     all_args.add_argument("-hps", "--hog_pixel_similarity", default=0, help="analyze the visual structure of the dataset to determine if there is visual similarity among the objects used")
-    all_args.add_argument("-v16con", "--vgg16_contexts", default=1, help="singles out vgg16 contextual information for direct comparisions with contextual data obtained from human behavioral assessments") # produces contexts for vgg16 to compare with behavioral data in Aminoff et al. 2022
-    all_args.add_argument("-tt", "--ttests", default=1, help="perform t-tests using the max context/category ratio extracted from each cnn model for each context/category data item used. Options include t-tests on all models, models trained on ImageNet vs Places365, and shallow vs deep networks as examples") # run t-test analyses in the manner done by Aminoff et al. 2022
+    all_args.add_argument("-v16con", "--vgg16_contexts", default=0, help="singles out vgg16 contextual information for direct comparisions with contextual data obtained from human behavioral assessments") # produces contexts for vgg16 to compare with behavioral data in Aminoff et al. 2022
+    all_args.add_argument("-tt", "--ttests", default=0, help="perform t-tests using the max context/category ratio extracted from each cnn model for each context/category data item used. Options include t-tests on all models, models trained on ImageNet vs Places365, and shallow vs deep networks as examples") # run t-test analyses in the manner done by Aminoff et al. 2022
 
     # models
-    all_args.add_argument("-a", "--all_models", default=0, help='use all the models currently available in load_weights.py')
+    all_args.add_argument("-a", "--all_models", default=1, help='use all the models currently available in load_weights.py')
     all_args.add_argument("-anet", f'--{ALEXNET}', default=0, help='AlexNet pretrained on ImageNet')
     all_args.add_argument("-anetp", f"--{ALEXNET_PLACES365}", default=0, help='AlexNet pretrained on Places365')
     all_args.add_argument("-v16", f"--{VGG16}", default=0, help='VGG16 pretrained on ImageNet')

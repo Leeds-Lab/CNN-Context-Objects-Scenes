@@ -17,7 +17,8 @@ MAX_CAT_PATH = f'{TABLES_PATH}max_categories.csv'
 MAX_CON_PATH = f'{TABLES_PATH}max_contexts.csv'
 
 # Context/Category information based on data paths, directories, and files contained in these directories
-CONTEXTS = len(os.listdir(DATA_PATH))
+# CONTEXTS = len(os.listdir(DATA_PATH))
+CONTEXTS = 54
 CATEGORIES = CONTEXTS * 2
 CONTEXT_EXEMPLARS = 10 # same as total number of pictures for each context file
 CATEGORY_EXEMPLARS = int(CONTEXT_EXEMPLARS / 2)
