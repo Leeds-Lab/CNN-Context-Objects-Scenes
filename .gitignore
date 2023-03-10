@@ -5,3 +5,4 @@ models/checkpoints/*
 outputs/*
 data/*
 temp.ipynb
+.ipynb_checkpoints/

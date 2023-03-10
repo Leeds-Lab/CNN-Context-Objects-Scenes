@@ -109,8 +109,9 @@ class Matrix_Evaluator:
             ax.set_title(f"{key}: invals vs inOut Ratios")
 
             # add annotations
+            # red if in-imagenet; blue for out-imagenet
             for i in range(len(val[0])):
-                ax.annotate(annotations[i], (val[0][i], val[1][i]+0.02))
+                ax.annotate(annotations[i][0], (val[0][i], val[1][i]+0.02), color = "red" if annotations[i][1] == 1 else "blue")
             plt.savefig(f"{curves_path}/{model_name}_{key}.png")
 
         return 
@@ -152,15 +153,41 @@ class Matrix_Evaluator:
             # Context/Category Ratio analysis for each layer
 
             # get mappings of filenames
-            CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME]
+            CONTEXT_NAMES = ([CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
             TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
-            pattern = re.compile(r"\(\d+\).jpe?g")
-            for file_name in range(len(TEMP_FILENAMES)):
-                TEMP_FILENAMES[file_name] = re.sub(pattern,"",TEMP_FILENAMES[file_name])
+            
+            # for images_spring23 data
+            pattern = re.compile(r"(\d+).jpe?g", re.IGNORECASE)
+            imagenet_pattern = re.compile(r"(\d\d).*")
 
+            for i in range(len(TEMP_FILENAMES)):
+                file_name = TEMP_FILENAMES[i]
+                TEMP_FILENAMES[i] = re.sub(pattern,"",file_name)
+
+            # add context information to each category
             CATEGORY_NAMES = list()
+            cindex = 0
+
             for i in range(1,len(TEMP_FILENAMES),5):
-                CATEGORY_NAMES.append(TEMP_FILENAMES[i])
+
+                if i % 2 != 0:
+                    imagenet_status = int(re.match(imagenet_pattern, CONTEXT_NAMES[cindex]).group(1))
+
+                    if imagenet_status <=31:
+                        CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],1)
+                    else:
+                        CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],0)
+        
+                    cindex +=1
+                
+                if imagenet_status <= 31:
+                    CATEGORY_NAMES.append((TEMP_FILENAMES[i],1))
+                else:
+                    CATEGORY_NAMES.append((TEMP_FILENAMES[i],0))
+
+            # CATEGORY_NAMES = list()
+            # for i in range(1,len(TEMP_FILENAMES),5):
+            #     CATEGORY_NAMES.append(TEMP_FILENAMES[i])
             
             layCon = dict()
             layCat = dict()
@@ -200,9 +227,9 @@ class Matrix_Evaluator:
             # create dataframes of ratios at each layer and map to context/category names
             
             layCon_df = pd.DataFrame(layCon)
-            layCon_df.index = CONTEXT_NAMES
+            layCon_df.index = [CON_NAME[0] for CON_NAME in CONTEXT_NAMES] 
             layCat_df = pd.DataFrame(layCat)
-            layCat_df.index = CATEGORY_NAMES 
+            layCat_df.index = [CAT_NAME[0] for CAT_NAME in CATEGORY_NAMES] 
 
             # now get top10 and bottom 10 values from each dataframe   
             # at this point, self.in_context_values contains on context values of all 73 contexts across all layers of this model

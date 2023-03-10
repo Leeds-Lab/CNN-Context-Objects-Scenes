@@ -17,16 +17,38 @@ from tools.utils import files_setup as fs
 
 
 # get annotations
-CONTEXT_NAMES = [CONTEXT_NAME for CONTEXT_NAME in os.listdir(f"{DATA_PATH}")]
+
+CONTEXT_NAMES = ([CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
 TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
 
-pattern = re.compile(r"\(\d+\).jpg")
-for file_name in range(len(TEMP_FILENAMES)):
-    TEMP_FILENAMES[file_name] = re.sub(pattern,"",TEMP_FILENAMES[file_name])
+# for images_spring23 data
+pattern = re.compile(r"(\d+).jpe?g", re.IGNORECASE)
+imagenet_pattern = re.compile(r"(\d\d).*")
 
+for i in range(len(TEMP_FILENAMES)):
+    file_name = TEMP_FILENAMES[i]
+    TEMP_FILENAMES[i] = re.sub(pattern,"",file_name)
+
+# add context information to each category
 CATEGORY_NAMES = list()
+cindex = 0
+
 for i in range(1,len(TEMP_FILENAMES),5):
-    CATEGORY_NAMES.append(TEMP_FILENAMES[i])
+
+    if i % 2 != 0:
+        imagenet_status = int(re.match(imagenet_pattern, CONTEXT_NAMES[cindex]).group(1))
+
+        if imagenet_status <=31:
+            CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],1)
+        else:
+            CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],0)
+
+        cindex +=1
+    
+    if imagenet_status <= 31:
+        CATEGORY_NAMES.append((TEMP_FILENAMES[i],1))
+    else:
+        CATEGORY_NAMES.append((TEMP_FILENAMES[i],0))
 
 # this function compares models based on invalues and inout ratios
 def compare_models(models, type, layers= None, annotations = None):
@@ -43,8 +65,9 @@ def compare_models(models, type, layers= None, annotations = None):
     for model,layer in zip(models,layers):
         ax.scatter(dictionaries[model][layer][1][0],dictionaries[model][layer][1][1], label=f"{model}-{layer}")
         # add annotations
+        # red -> InImagenet, blue -> OutImageNet
         for i in range(len(dictionaries[model][layer][1][0])):
-            ax.annotate(annotations[i], (dictionaries[model][layer][1][0][i],dictionaries[model][layer][1][1][i] + 0.02 ))
+            ax.annotate(annotations[i][0], (dictionaries[model][layer][1][0][i],dictionaries[model][layer][1][1][i] + 0.02 ),color = "red" if annotations[i][1] == 1 else "blue")
     ax.set_xlabel(f"in{type} Values")
     ax.set_ylabel(f"inOutRatios")
     ax.legend()
@@ -129,8 +152,8 @@ def model_correlations(models, type, layers= None, annotations = None):
 
         # annotate
         for i in range(len(dictionaries[model1][layer1][1][0])):
-            ax1.annotate(annotations[i], (dictionaries[model1][layer1][1][0][i], dictionaries[model2][layer2][1][0][i] + 0.003), fontsize = 6 )
-            ax2.annotate(annotations[i], (dictionaries[model1][layer1][1][1][i], dictionaries[model2][layer2][1][1][i] + 0.003), fontsize = 6 )
+            ax1.annotate(annotations[i][0], (dictionaries[model1][layer1][1][0][i], dictionaries[model2][layer2][1][0][i] + 0.003), fontsize = 6 ,color = "red" if annotations[i][1] == 1 else "blue")
+            ax2.annotate(annotations[i][0], (dictionaries[model1][layer1][1][1][i], dictionaries[model2][layer2][1][1][i] + 0.003), fontsize = 6 ,color = "red" if annotations[i][1] == 1 else "blue")
         
         ax1.set_xlabel(f"{model1}-layer{layer1+1}")
         ax2.set_xlabel(f"{model1}-layer{layer1+1}")
@@ -215,6 +238,16 @@ model_correlations(["AlexNet_Places365","ResNet18_Places365"],"Context",annotati
 model_correlations(["AlexNet","ResNet18_Places365"],"Category",annotations=CATEGORY_NAMES)
 model_correlations(["AlexNet","ResNet18_Places365"],"Context",annotations=CONTEXT_NAMES)
 
+# places vs imagenet
+# resnet18
+model_correlations(["ResNet18","ResNet18_Places365"],"Category",annotations=CATEGORY_NAMES)
+model_correlations(["ResNet18","ResNet18_Places365"],"Context",annotations=CONTEXT_NAMES)
+# resnet50
+model_correlations(["ResNet50","ResNet50_Places365"],"Category",annotations=CATEGORY_NAMES)
+model_correlations(["ResNet50","ResNet50_Places365"],"Context",annotations=CONTEXT_NAMES)
+# alexnet
+model_correlations(["AlexNet","AlexNet_Places365"],"Category",annotations=CATEGORY_NAMES)
+model_correlations(["AlexNet","AlexNet_Places365"],"Context",annotations=CONTEXT_NAMES)
 
 
 # for individual input

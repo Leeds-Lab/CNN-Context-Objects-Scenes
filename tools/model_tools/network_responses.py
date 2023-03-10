@@ -99,3 +99,4 @@ class Network_Evaluator:
             self.find_max_neurons_and_layers_for()
             Study_Model = Analytics_Suite(self.dictionary, self.batch_analysis, CNN_MODEL)
             Study_Model.run_analytics_suite()
+            

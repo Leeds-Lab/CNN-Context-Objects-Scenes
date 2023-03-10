@@ -1,6 +1,7 @@
 import pandas as pd
 import scipy.stats as stats
 
+
 # This code is for performing t-tests on the Context Associations in CNNs paper (Aminoff, Baror, Roginek & Leeds 2022)
 class T_Tests:
     def __init__(self, filepath, table_type, REMOVE_COLUMNS, VGG16, IMAGENET, PLACES365, SHALLOW, DEEP):
