@@ -261,6 +261,3 @@ base_path_context = OUTPUT_MODELS_PATH+f"model_comparisons_context/"
 
 merge_correlations(base_path_category)
 merge_correlations(base_path_context)
-
-
-

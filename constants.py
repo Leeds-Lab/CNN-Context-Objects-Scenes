@@ -2,7 +2,7 @@ import os
 from models.load_weights import Models
 
 # Static data path variables
-DATA_NAME = 'Images_Spring2023'
+DATA_NAME = 'scenes_obj'
 CONTEXT_CONFOUNDS = f'confounding_data/{DATA_NAME}/context_confounds.txt'
 CATEGORY_CONFOUNDS = f'confounding_data/{DATA_NAME}/category_confounds.txt'
 
@@ -17,12 +17,12 @@ MAX_CAT_PATH = f'{TABLES_PATH}max_categories.csv'
 MAX_CON_PATH = f'{TABLES_PATH}max_contexts.csv'
 
 # Context/Category information based on data paths, directories, and files contained in these directories
-# CONTEXTS = len(os.listdir(DATA_PATH))
-CONTEXTS = 54
+CONTEXTS = len(sorted(os.listdir(DATA_PATH)))
+# CONTEXTS = 54
 CATEGORIES = CONTEXTS * 2
 CONTEXT_EXEMPLARS = 10 # same as total number of pictures for each context file
 CATEGORY_EXEMPLARS = int(CONTEXT_EXEMPLARS / 2)
-DIRECTORIES_FOR_ANALYSIS = [DATA_PATH + CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME]
+DIRECTORIES_FOR_ANALYSIS = sorted([DATA_PATH + CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
 START_FILE_NUMBER = 1 
 END_FILE_NUMBER = 10 # same as total number of pictures for each context file
 
