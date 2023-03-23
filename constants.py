@@ -20,11 +20,11 @@ MAX_CON_PATH = f'{TABLES_PATH}max_contexts.csv'
 CONTEXTS = len(sorted(os.listdir(DATA_PATH)))
 # CONTEXTS = 54
 CATEGORIES = CONTEXTS * 2
-CONTEXT_EXEMPLARS = 10 # same as total number of pictures for each context file
+CONTEXT_EXEMPLARS = 8 # same as total number of pictures for each context file
 CATEGORY_EXEMPLARS = int(CONTEXT_EXEMPLARS / 2)
 DIRECTORIES_FOR_ANALYSIS = sorted([DATA_PATH + CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
 START_FILE_NUMBER = 1 
-END_FILE_NUMBER = 10 # same as total number of pictures for each context file
+END_FILE_NUMBER = 8 # same as total number of pictures for each context file
 
 # Load shallow and deep models
 PyTorch_Models = Models()
