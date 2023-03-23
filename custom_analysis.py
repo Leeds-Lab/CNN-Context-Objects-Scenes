@@ -14,41 +14,57 @@ from tools.utils import files_setup as fs
 
 # DATA_NAME = "Aminoff2022_73"       -- change it in the constants.py file if you need to switch to 73
 
-
+# SCENES_OBJECTS
 
 # get annotations
-
-CONTEXT_NAMES = ([CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
 TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
-
+            
 # for images_spring23 data
-pattern = re.compile(r"(\d+).jpe?g", re.IGNORECASE)
-imagenet_pattern = re.compile(r"(\d\d).*")
+# pattern = re.compile(r"(\d+).jpe?g", re.IGNORECASE)
+# imagenet_pattern = re.compile(r"(\d\d).*")
 
-for i in range(len(TEMP_FILENAMES)):
+# for scenes_obj data
+OBJECT_NAMES = list()
+pattern = re.compile(r"(\S*)\s?\(?\d.*.jpe?g", re.IGNORECASE)
+
+for i in range(5,len(TEMP_FILENAMES),8):
     file_name = TEMP_FILENAMES[i]
-    TEMP_FILENAMES[i] = re.sub(pattern,"",file_name)
+    new_filename = re.match(pattern,file_name).group(1)
+    OBJECT_NAMES.append(re.sub(pattern,new_filename,file_name))
 
-# add context information to each category
-CATEGORY_NAMES = list()
-cindex = 0
+# # get annotations
 
-for i in range(1,len(TEMP_FILENAMES),5):
+# CONTEXT_NAMES = ([CONTEXT_NAME for CONTEXT_NAME in os.listdir(DATA_PATH) if "DS_Store" not in CONTEXT_NAME])
+# TEMP_FILENAMES = fs.organize_paths_for(DIRECTORIES_FOR_ANALYSIS, END_FILE_NUMBER)
 
-    if i % 2 != 0:
-        imagenet_status = int(re.match(imagenet_pattern, CONTEXT_NAMES[cindex]).group(1))
+# # for images_spring23 data
+# pattern = re.compile(r"(\d+).jpe?g", re.IGNORECASE)
+# imagenet_pattern = re.compile(r"(\d\d).*")
 
-        if imagenet_status <=31:
-            CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],1)
-        else:
-            CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],0)
+# for i in range(len(TEMP_FILENAMES)):
+#     file_name = TEMP_FILENAMES[i]
+#     TEMP_FILENAMES[i] = re.sub(pattern,"",file_name)
 
-        cindex +=1
+# # add context information to each category
+# CATEGORY_NAMES = list()
+# cindex = 0
+
+# for i in range(1,len(TEMP_FILENAMES),5):
+
+#     if i % 2 != 0:
+#         imagenet_status = int(re.match(imagenet_pattern, CONTEXT_NAMES[cindex]).group(1))
+
+#         if imagenet_status <=31:
+#             CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],1)
+#         else:
+#             CONTEXT_NAMES[cindex] = (CONTEXT_NAMES[cindex],0)
+
+#         cindex +=1
     
-    if imagenet_status <= 31:
-        CATEGORY_NAMES.append((TEMP_FILENAMES[i],1))
-    else:
-        CATEGORY_NAMES.append((TEMP_FILENAMES[i],0))
+#     if imagenet_status <= 31:
+#         CATEGORY_NAMES.append((TEMP_FILENAMES[i],1))
+#     else:
+#         CATEGORY_NAMES.append((TEMP_FILENAMES[i],0))
 
 # this function compares models based on invalues and inout ratios
 def compare_models(models, type, layers= None, annotations = None):
@@ -65,9 +81,8 @@ def compare_models(models, type, layers= None, annotations = None):
     for model,layer in zip(models,layers):
         ax.scatter(dictionaries[model][layer][1][0],dictionaries[model][layer][1][1], label=f"{model}-{layer}")
         # add annotations
-        # red -> InImagenet, blue -> OutImageNet
         for i in range(len(dictionaries[model][layer][1][0])):
-            ax.annotate(annotations[i][0], (dictionaries[model][layer][1][0][i],dictionaries[model][layer][1][1][i] + 0.02 ),color = "red" if annotations[i][1] == 1 else "blue")
+            ax.annotate(annotations[i], (dictionaries[model][layer][1][0][i],dictionaries[model][layer][1][1][i] + 0.02 ),color = "red")
     ax.set_xlabel(f"in{type} Values")
     ax.set_ylabel(f"inOutRatios")
     ax.legend()
@@ -152,8 +167,8 @@ def model_correlations(models, type, layers= None, annotations = None):
 
         # annotate
         for i in range(len(dictionaries[model1][layer1][1][0])):
-            ax1.annotate(annotations[i][0], (dictionaries[model1][layer1][1][0][i], dictionaries[model2][layer2][1][0][i] + 0.003), fontsize = 6 ,color = "red" if annotations[i][1] == 1 else "blue")
-            ax2.annotate(annotations[i][0], (dictionaries[model1][layer1][1][1][i], dictionaries[model2][layer2][1][1][i] + 0.003), fontsize = 6 ,color = "red" if annotations[i][1] == 1 else "blue")
+            ax1.annotate(annotations[i], (dictionaries[model1][layer1][1][0][i], dictionaries[model2][layer2][1][0][i] + 0.003), fontsize = 6 ,color = "red")
+            ax2.annotate(annotations[i], (dictionaries[model1][layer1][1][1][i], dictionaries[model2][layer2][1][1][i] + 0.003), fontsize = 6 ,color = "red")
         
         ax1.set_xlabel(f"{model1}-layer{layer1+1}")
         ax2.set_xlabel(f"{model1}-layer{layer1+1}")
@@ -217,37 +232,30 @@ def model_correlations(models, type, layers= None, annotations = None):
 
 imageNet_models = ["AlexNet","ResNet50","Vgg16"]  # can add more models?
 for models in list(combinations(imageNet_models,2)):
-    # category
-    model_correlations(models,"category",annotations=CATEGORY_NAMES)
     # context
-    model_correlations(models,"context", annotations=CONTEXT_NAMES)
+    model_correlations(models,"context", annotations=OBJECT_NAMES)
 
 
 places_models = ["AlexNet_Places365","ResNet50_Places365"]
+
 for models in list(combinations(places_models,2)):
 
-    model_correlations(models,"category",annotations=CATEGORY_NAMES)
-    model_correlations(models,"context",annotations=CONTEXT_NAMES)
+    model_correlations(models,"context",annotations=OBJECT_NAMES)
 
 
 # resnet_places and alexnet_places
-model_correlations(["AlexNet_Places365","ResNet18_Places365"],"Category",annotations=CATEGORY_NAMES)
-model_correlations(["AlexNet_Places365","ResNet18_Places365"],"Context",annotations=CONTEXT_NAMES)
+model_correlations(["AlexNet_Places365","ResNet18_Places365"],"Context",annotations=OBJECT_NAMES)
 
 # resnet_places and alexnet(-imagenet)
-model_correlations(["AlexNet","ResNet18_Places365"],"Category",annotations=CATEGORY_NAMES)
-model_correlations(["AlexNet","ResNet18_Places365"],"Context",annotations=CONTEXT_NAMES)
+model_correlations(["AlexNet","ResNet18_Places365"],"Context",annotations=OBJECT_NAMES)
 
 # places vs imagenet
 # resnet18
-model_correlations(["ResNet18","ResNet18_Places365"],"Category",annotations=CATEGORY_NAMES)
-model_correlations(["ResNet18","ResNet18_Places365"],"Context",annotations=CONTEXT_NAMES)
+model_correlations(["ResNet18","ResNet18_Places365"],"Context",annotations=OBJECT_NAMES)
 # resnet50
-model_correlations(["ResNet50","ResNet50_Places365"],"Category",annotations=CATEGORY_NAMES)
-model_correlations(["ResNet50","ResNet50_Places365"],"Context",annotations=CONTEXT_NAMES)
+model_correlations(["ResNet50","ResNet50_Places365"],"Context",annotations=OBJECT_NAMES)
 # alexnet
-model_correlations(["AlexNet","AlexNet_Places365"],"Category",annotations=CATEGORY_NAMES)
-model_correlations(["AlexNet","AlexNet_Places365"],"Context",annotations=CONTEXT_NAMES)
+model_correlations(["AlexNet","AlexNet_Places365"],"Context",annotations=OBJECT_NAMES)
 
 
 # for individual input
@@ -259,5 +267,5 @@ base_path_category = OUTPUT_MODELS_PATH+f"model_comparisons_category/"
 base_path_context = OUTPUT_MODELS_PATH+f"model_comparisons_context/"
 
 
-merge_correlations(base_path_category)
+# merge_correlations(base_path_category)
 merge_correlations(base_path_context)
