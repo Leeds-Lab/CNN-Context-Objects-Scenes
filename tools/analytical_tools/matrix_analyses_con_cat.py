@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import matplotlib.pyplot as plt
 import pickle
+from statistics import mean, pstdev
 
 from tools.utils import files_setup as fs
 from tools.model_tools.network_parsers.shallow_net import Shallow_CNN
@@ -31,18 +32,32 @@ class Matrix_Evaluator:
         self.database = pd.DataFrame(columns=COL_NAMES)
         # Confound matrices variables (can be ignored or discarded for other datasets)
         self.use_confounds = use_confounds
+        self.layerInValMeans = dict()
+        self.layerOutValMeans = dict()
+        self.layerInOutRatioMeans = dict()
 
     def context_ratio_analysis(self, layer_num):   
-        for k in range(CONTEXTS):   # 52 contexts
+        for k in range(CONTEXTS):   # 50 contexts
             # objOutScene
             temp = np.empty(CATEGORY_EXEMPLARS)
+            # print(self.layer_data.shape)
             for j in range(CONTEXTS):
                 if j==k:
                     continue
 
-                temp = np.vstack([temp,self.layer_data[CONTEXT_EXEMPLARS*j : CONTEXT_EXEMPLARS*j + CATEGORY_EXEMPLARS ,CATEGORY_EXEMPLARS*(2*k + 1) : CATEGORY_EXEMPLARS*(2*k + 1) + CATEGORY_EXEMPLARS]])
+                try:
+                    temp = np.vstack([temp,self.layer_data[CONTEXT_EXEMPLARS*j : CONTEXT_EXEMPLARS*j + CATEGORY_EXEMPLARS ,CATEGORY_EXEMPLARS*(2*k + 1) : CATEGORY_EXEMPLARS*(2*k + 1) + CATEGORY_EXEMPLARS]])
+                except:
+                    print(j,k)
+                    print("error!")
+                    break
             
-            out_values = temp[1:].mean()
+            submatrix_data = temp[1:]
+
+            if self.use_confounds: submatrix = context_confound_submat(self.context_confounds, k, submatrix_data)
+            else: submatrix = submatrix_data
+
+            out_values = submatrix.mean()
             self.obj_OutScene.append(out_values)
 
             # obj_InScene
@@ -53,6 +68,8 @@ class Matrix_Evaluator:
             contextRatio = in_values/out_values
             self.obj_InOutRatio.append(contextRatio)  
             print(f"{layer_num}\t{in_values}\t{out_values}\t{contextRatio}", file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'a'))
+
+        # pd.DataFrame(self.obj_InScene).to_csv(f"")
         
     
     def generate_ratioCurves(self,model_name,Dict, type=None, base_path = None, annotations = None):
@@ -76,6 +93,7 @@ class Matrix_Evaluator:
         temp_df = pd.DataFrame()
         for key, val in Dict.items():
             temp_df[key+"inVals"] = pd.Series(val[0]).T
+            temp_df[key+"OutVals"] = pd.Series(val[2]).T
             temp_df[key+"inOutRatios"] = pd.Series(val[1]).T
 
         temp_df.to_csv(f"{curves_path}/{model_name}_inVal_Ratio.csv")
@@ -120,6 +138,11 @@ class Matrix_Evaluator:
     def loop_through_models_and_analyze(self):
         for model_name in range(len(self.M_FILES)):
             MODEL_NAME = self.M_FILES[model_name]    # alex_net
+            
+            self.layerInValMeans[MODEL_NAME] = []
+            self.layerOutValMeans[MODEL_NAME] = []
+            self.layerInOutRatioMeans[MODEL_NAME] = []
+
             if not os.path.isdir(OUTPUT_MODELS_PATH + MODEL_NAME): continue    # "./outputs/models/alex_net/"
             self.path_to_file = OUTPUT_MODELS_PATH + MODEL_NAME + self.MATRIX_PATH # ""./outputs/models/alex_net/Pearson's Correlation
 
@@ -129,7 +152,7 @@ class Matrix_Evaluator:
             else: print(f"\n\n{MODEL_NAME} not listed? Not found in either SHALLOW_MODEL or DEEP_MODEL.\n\n")
             layer_vector = list(range(Model_Features.NUMBER_OF_LAYERS))    # ex [0,1,2,3,4,5,6,7] if num of layers = 8
 
-            if self.use_confounds: self.context_confounds, self.category_confounds = create_confound_matrix()
+            if self.use_confounds: self.context_confounds = create_confound_matrix()
 
             file=open(self.path_to_file + RAW_CONTEXT_RATIOS_FILE, 'w')   # create a new file at "./outputs/models/alex_net/Pearson's Correlations/raw_context_ratios.txt"
             file=open(self.path_to_file + RAW_CATEGORY_RATIOS_FILE, 'w')  # "raw_category_ratios in similar fashion"
@@ -166,10 +189,27 @@ class Matrix_Evaluator:
                 self.layer_data = np.load(layers_paths[i])     
                 self.context_ratio_analysis(i)                  
 
-                layCon[f"Layer{i+1}"] = self.obj_InOutRatio[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]   # ratios of each layer
+                layCon[f"Layer{i+1}"] = self.obj_InOutRatio[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]               # ratios of each layer
                 check_cons[f"Layer{i+1}"] = list()
-                check_cons[f"Layer{i+1}"].append(self.obj_InScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]) # invalues of each layer
+                check_cons[f"Layer{i+1}"].append(self.obj_InScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])        # invalues of each layer
                 check_cons[f"Layer{i+1}"].append(self.obj_InOutRatio[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])     # ratios of each layer
+                check_cons[f"Layer{i+1}"].append(self.obj_OutScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])       # out ratios for each layer
+
+                # [52invals, 52vals, ...]
+                # means of all contexts
+                invalMean  = mean(self.obj_InScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
+                invalError =  pstdev(self.obj_InScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS]) / np.sqrt(CONTEXTS)
+
+                ratioMean  = mean(self.obj_InOutRatio[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
+                ratioError = pstdev(self.obj_InOutRatio[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
+
+                outvalMean = mean(self.obj_OutScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
+                outvalError= pstdev(self.obj_OutScene[(CONTEXTS*i):(CONTEXTS*i)+CONTEXTS])
+
+
+                self.layerInValMeans[MODEL_NAME].append((invalMean, invalError))
+                self.layerInOutRatioMeans[MODEL_NAME].append((ratioMean, ratioError))
+                self.layerOutValMeans[MODEL_NAME].append((outvalMean, outvalError))
 
 
             
@@ -179,7 +219,80 @@ class Matrix_Evaluator:
                 os.mkdir(RATIO_CURVES_PATH)
             
 
-            self.generate_ratioCurves(MODEL_NAME,check_cons, type = "context", base_path= RATIO_CURVES_PATH, annotations=OBJECT_NAMES)
+            self.generate_ratioCurves(MODEL_NAME,check_cons, type = "context", base_path= RATIO_CURVES_PATH, annotations=CONTEXT_NAMES)
+
+            # layer means 
+            LAYER_MEANS_PATH = OUTPUT_MODELS_PATH + MODEL_NAME + "/MeanValue_Curves"
+            if not os.path.exists(LAYER_MEANS_PATH):
+                os.mkdir(LAYER_MEANS_PATH)
+
+            # save csv of each model and also generate curves for each layer
+            pd.DataFrame(self.layerOutValMeans, columns=[MODEL_NAME]).to_csv(f"{LAYER_MEANS_PATH}/outvals.csv")
+            pd.DataFrame(self.layerInValMeans, columns=[MODEL_NAME]).to_csv(f"{LAYER_MEANS_PATH}/invals.csv")
+            pd.DataFrame(self.layerInOutRatioMeans, columns=[MODEL_NAME]).to_csv(f"{LAYER_MEANS_PATH}/inoutratios.csv")
+
+            layer_annotations = list()
+            for i in range(len(layer_vector)):
+                layer_annotations.append(f"Layer{i+1}")
+            
+            def plot_layer_means(invals, outvals, ratios, path, annots):
+
+
+
+                # plot mean-invalues of each layer
+                fig, ax = plt.subplots(figsize = (12,10))
+                xin = range(len(invals))
+                yval = [x[0] for x in invals]
+                yerror = [x[1] for x in invals]
+                
+                ax.scatter(xin,yval)
+                ax.errorbar(xin,yval,yerr = yerror, fmt="o", capsize=2)
+                ax.set_xlabel(f"layers")
+                ax.set_ylabel("Invals")
+                ax.set_title(f"{MODEL_NAME}")
+
+                for i in range(len(annots)):
+                    ax.annotate(annots[i], (i, yval[i]+0.0002), color = "red", fontsize = 10)
+                plt.savefig(f"{path}/invals.png")
+
+                # plot mean-outvalues of each layer
+
+                fig, ax = plt.subplots(figsize = (12,10))
+                xin = range(len(outvals))
+                yval = [x[0] for x in outvals]
+                yerror = [x[1] for x in outvals]
+                
+                ax.scatter(xin,yval)
+                ax.errorbar(xin,yval,yerr = yerror, fmt="o", capsize=2)
+                ax.set_xlabel(f"layers")
+                ax.set_ylabel("Outvals")
+                ax.set_title(f"{MODEL_NAME}")
+
+                for i in range(len(annots)):
+                    ax.annotate(annots[i], (i, yval[i]+0.0002), color = "red", fontsize = 10)
+                plt.savefig(f"{path}/outvals.png")
+
+
+                # plot mean-InOutRatios of each layer
+
+                fig, ax = plt.subplots(figsize = (12,10))
+                xin = range(len(ratios))
+                yval = [x[0] for x in ratios]
+                yerror = [x[1] for x in ratios]
+                
+                ax.scatter(xin,yval)
+                ax.errorbar(xin,yval,yerr = yerror, fmt="o", capsize=2)
+                ax.set_xlabel(f"layers")
+                ax.set_ylabel("InOutRatios")
+                ax.set_title(f"{MODEL_NAME}")
+
+                for i in range(len(annots)):
+                    ax.annotate(annots[i], (i, yval[i]+0.0002), color = "red", fontsize = 10)
+                plt.savefig(f"{path}/InOutRatios.png")
+
+            plot_layer_means(self.layerInValMeans[MODEL_NAME], self.layerOutValMeans[MODEL_NAME], self.layerInOutRatioMeans[MODEL_NAME], LAYER_MEANS_PATH, layer_annotations)
+
+
 
             
             # create dataframes of ratios at each layer and map to context/category names
@@ -216,7 +329,10 @@ class Matrix_Evaluator:
             # data_matrix=[network_name, layer_vector, mn_vec_context, p_vec1_context, p_vecR_context, context_error_bars, mn_vec_category, p_vec1_category, p_vecR_category, category_error_bars, p_vecR_context_vs_category, confounds_removed]
             # df=pd.DataFrame(np.array(data_matrix).T,columns=COL_NAMES)
             # df.to_csv(f"{self.path_to_file}/{MODEL_NAME}{self.MATRIX_RATIOS_NAME}.csv")
-            self.obj_InScene, self.obj_OutScene, self.obj_InOutRatio = [], [], [] # reset context lists
+
+
+            # RESET THE LISTS FOR NEXT MODEL
+            self.obj_InScene, self.obj_OutScene, self.obj_InOutRatio = [], [], [] 
             print(f"{MODEL_NAME} context/category ratios obtained.")
 
 
@@ -224,3 +340,5 @@ class Matrix_Evaluator:
     def compute_ratios(self):
         self.loop_through_models_and_analyze()
         print(f"Done! All network results saved in their respective filepaths.\n")
+
+# removing 39Gun as it was removed while getting network responses on erdos
