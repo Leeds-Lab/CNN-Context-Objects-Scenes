@@ -101,10 +101,14 @@ class Matrix_Evaluator:
 
         for key, val in Dict.items():
             fig, ax = plt.subplots(figsize = (12,10))
-            ax.scatter(val[0],val[1])
-            ax.set_xlabel(f"Object In-Scene Values")
-            ax.set_ylabel("Object inOutRatios")
-            ax.set_title(f"{key}: invals vs inOut Ratios")
+            ax.scatter(val[0],val[1],c='red',edgecolors='red')
+            ax.set_xlabel(f"Object In-Scene Values", fontsize = 24)
+            ax.set_ylabel("Object inOutRatios", fontsize = 24)
+            ax.set_title(f"{model_name}: {key}", fontsize = 24)
+            ax.plot([min(val[0]), max(val[0])], [1] * 2, "-", c = "black" )
+
+            ax.set_yticks([1], fontsize = 20)
+            ax.set_xticks([])
 
             # add annotations
             # red if in-imagenet; blue for out-imagenet
@@ -113,9 +117,10 @@ class Matrix_Evaluator:
             # plt.savefig(f"{curves_path}/{model_name}_{key}.png")
 
             # for scenes_objects
+            if annotations:
 
-            for i in range(len(val[0])):
-                ax.annotate(annotations[i], (val[0][i], val[1][i]+0.0002), color = "red", fontsize = 10)
+                for i in range(len(val[0])):
+                    ax.annotate(annotations[i], (val[0][i], val[1][i]+0.0002), color = "red", fontsize = 10)
             plt.savefig(f"{curves_path}/{model_name}_{key}.png")
 
         return 
@@ -219,7 +224,8 @@ class Matrix_Evaluator:
                 os.mkdir(RATIO_CURVES_PATH)
             
 
-            self.generate_ratioCurves(MODEL_NAME,check_cons, type = "context", base_path= RATIO_CURVES_PATH, annotations=CONTEXT_NAMES)
+            # switched annotations off
+            self.generate_ratioCurves(MODEL_NAME,check_cons, type = "context", base_path= RATIO_CURVES_PATH, annotations=None)
 
             # layer means 
             LAYER_MEANS_PATH = OUTPUT_MODELS_PATH + MODEL_NAME + "/MeanValue_Curves"

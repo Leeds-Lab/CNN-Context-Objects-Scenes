@@ -2,7 +2,7 @@ import os
 from models.load_weights import Models
 
 # Static data path variables
-DATA_NAME = 'scenes_obj'
+DATA_NAME = 'scenes_obj2'
 # CONTEXT_CONFOUNDS = f'confounding_data/{DATA_NAME}/context_confounds.txt'
 # for scenes_obj data
 CONTEXT_CONFOUNDS = f"confounding_data/{DATA_NAME}/context_confounds.npy"
