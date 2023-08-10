@@ -7,7 +7,7 @@ class Deep_CNN(nn.Module):
             super(Deep_CNN, self).__init__()
             self.model_layer_list = list(model.children())
             self.NUMBER_OF_LAYERS = len(self.model_layer_list)
-            self.features = nn.Sequential(*self.model_layer_list[:layer_number])
+            self.features = nn.Sequential(*self.model_layer_list[:layer_number+1])
 
     def forward(self, x):
             x = self.features(x)
