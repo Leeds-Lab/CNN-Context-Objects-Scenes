@@ -7,3 +7,5 @@ data/*
 temp.ipynb
 .ipynb_checkpoints/
 tools/analytical_tools/__pycache__
+**/__pycache__/
+**/.DS_Store
