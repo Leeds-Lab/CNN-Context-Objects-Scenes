@@ -8,7 +8,10 @@ class Shallow_CNN(nn.Module):
             super(Shallow_CNN, self).__init__()
             self.model_layer_list = list(model.features.children())
             self.NUMBER_OF_LAYERS = len(self.model_layer_list)
-            self.features = nn.Sequential(*self.model_layer_list[:layer_number + 1])
+            if layer_number is not None:
+                self.features = nn.Sequential(*self.model_layer_list[:layer_number + 1])
+            else:
+                self.features = nn.Sequential(*self.model_layer_list)
 
     def forward(self, x):
             x = self.features(x)
@@ -26,6 +29,7 @@ class Shallow_CNN(nn.Module):
 # shallow_model_layers() is called by get_layer_data() in the Extractor class (neuron_retrieval.py) 
 # shal_model is a PARTICULAR model in object shallow_model (ex: AlexNet, VGG16, etc.)
 def shallow_model_layers(shal_model, batch_t):
+
     Cnn = Shallow_CNN(shal_model)
     number_of_layers = Cnn.NUMBER_OF_LAYERS
     network_layers = list(range(number_of_layers))

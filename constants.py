@@ -1,8 +1,11 @@
 import os
 from models.load_weights import Models
+import torch
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
 
 # Static data path variables
-DATA_NAME = 'scenes_obj2'
+DATA_NAME = 'scenes_obj'
 # CONTEXT_CONFOUNDS = f'confounding_data/{DATA_NAME}/context_confounds.txt'
 # for scenes_obj data
 CONTEXT_CONFOUNDS = f"confounding_data/{DATA_NAME}/context_confounds.npy"

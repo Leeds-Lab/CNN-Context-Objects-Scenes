@@ -7,7 +7,7 @@ def parser_cmds():
     # Default arguments for analyses used in Aminoff et al. (2022) 
     # Investigate context/category responsiveness in a convolutional neural network by using Pearson's Correlation Coefficient
     # HOG and pixel similarity analysis of the image dataset (needs to be set to 1)
-    all_args.add_argument("-n", "--net_responses", default=0, help="extract cnn model network responses to image data for each convolution layer")
+    all_args.add_argument("-n", "--net_responses", default=1, help="extract cnn model network responses to image data for each convolution layer")
     all_args.add_argument("-c", "--compute_ratios", default=1, help="calculate context and category ratios for each cnn model network using matrix data created from --net_responses")
     all_args.add_argument("-pch", "--pearson_charts", default=0, help="create context and category line graphs using ratio pearson correlation information obtained from --compute_ratios")
     all_args.add_argument("-p", '--pearson', default=1, help="use pearson's correlation for analyzing --net_responses")

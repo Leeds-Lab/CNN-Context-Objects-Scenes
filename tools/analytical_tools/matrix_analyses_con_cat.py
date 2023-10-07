@@ -152,10 +152,14 @@ class Matrix_Evaluator:
             self.path_to_file = OUTPUT_MODELS_PATH + MODEL_NAME + self.MATRIX_PATH # ""./outputs/models/alex_net/Pearson's Correlation
 
             # Pass the model into its proper class to get its number of layers for the layer_vector
-            if MODEL_NAME in SHALLOW_MODEL.keys(): Model_Features = Shallow_CNN(SHALLOW_MODEL[MODEL_NAME])    # Model_features is an object that has class variables, self.number_of_layers and self.model_layer_list 
-            elif MODEL_NAME in DEEP_MODEL.keys(): Model_Features = Deep_CNN(DEEP_MODEL[MODEL_NAME])
-            else: print(f"\n\n{MODEL_NAME} not listed? Not found in either SHALLOW_MODEL or DEEP_MODEL.\n\n")
-            layer_vector = list(range(Model_Features.NUMBER_OF_LAYERS))    # ex [0,1,2,3,4,5,6,7] if num of layers = 8
+            if MODEL_NAME in SHALLOW_MODEL.keys(): 
+                Model_Features = Shallow_CNN(SHALLOW_MODEL[MODEL_NAME])    # Model_features is an object that has class variables, self.number_of_layers and self.model_layer_list 
+                layer_vector = list(range(Model_Features.NUMBER_OF_LAYERS))
+            elif MODEL_NAME in DEEP_MODEL.keys():
+                Model_Features = Deep_CNN(DEEP_MODEL[MODEL_NAME])
+                layer_vector = list(range(Model_Features.NUMBER_OF_LAYERS - 1))
+            else: 
+                print(f"\n\n{MODEL_NAME} not listed? Not found in either SHALLOW_MODEL or DEEP_MODEL.\n\n")
 
             if self.use_confounds: self.context_confounds = create_confound_matrix()
 
