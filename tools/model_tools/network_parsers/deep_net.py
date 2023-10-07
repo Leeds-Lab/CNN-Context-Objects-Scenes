@@ -7,7 +7,10 @@ class Deep_CNN(nn.Module):
             super(Deep_CNN, self).__init__()
             self.model_layer_list = list(model.children())
             self.NUMBER_OF_LAYERS = len(self.model_layer_list)
-            self.features = nn.Sequential(*self.model_layer_list[:layer_number+1])
+            if layer_number is not None:
+                self.features = nn.Sequential(*self.model_layer_list[:layer_number+1])
+            else:
+                self.features = nn.Sequential(*self.model_layer_list)
 
     def forward(self, x):
             x = self.features(x)
@@ -19,17 +22,16 @@ class Deep_CNN(nn.Module):
 def deep_model_layers(d_model, batch_t):
     Cnn = Deep_CNN(d_model)
     number_of_layers = Cnn.NUMBER_OF_LAYERS
-    layer = [None] * number_of_layers
-    for number in range(number_of_layers):
+    layer = [None] * (number_of_layers - 1)  # -1 because we don't want to include the last layer (classifier)
+    for number in range(len(layer)):
         sub_net = Deep_CNN(d_model, number)
         try:
-            full_layer = sub_net[-1]
+            full_layer = sub_net.features
             number_of_sublayers = len(full_layer)
             for k in range(number_of_sublayers):
-                full_layer_copy = full_layer
-                full_layer_copy = full_layer_copy[0:k]
-                sub_net[-1] = full_layer_copy
-                layer[number] = sub_net(batch_t)
+                full_layer_copy = full_layer[0:k+1]
+                layer[number] = full_layer_copy(batch_t)
         except:
+            print("Error: Deep model layer not found.")
             layer[number] = sub_net(batch_t)
-    return layer, number_of_layers
+    return layer, number_of_layers - 1 # -1 because we don't want to include the last layer (classifier)
